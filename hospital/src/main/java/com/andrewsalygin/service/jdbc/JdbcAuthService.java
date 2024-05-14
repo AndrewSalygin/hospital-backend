@@ -1,6 +1,7 @@
 package com.andrewsalygin.service.jdbc;
 
 import com.andrewsalygin.dto.authorization.AuthUserInfo;
+import com.andrewsalygin.dto.security.User;
 import com.andrewsalygin.exception.UserBadCredentialException;
 import com.andrewsalygin.hospital.model.JWTToken;
 import com.andrewsalygin.repository.AuthRepository;
@@ -34,8 +35,9 @@ public class JdbcAuthService implements AuthService {
         String encodedPasswordFromDB = authRepository.getEncodedPasswordByEmail(email);
 
         if (passwordEncoder.matches(password, encodedPasswordFromDB)) {
-            Long userId = authRepository.getUserIdByEmail(email);
-            String token = jwtUtil.generateToken(userId, email, encodedPasswordFromDB);
+            Integer userId = authRepository.getUserIdByEmail(email);
+            User user = authRepository.getUserById(userId);
+            String token = jwtUtil.generateToken(userId, email, user.role());
             JWTToken jwtToken = new JWTToken();
             jwtToken.setJwtToken(token);
             return new ResponseEntity<>(jwtToken, HttpStatus.OK);
@@ -47,25 +49,11 @@ public class JdbcAuthService implements AuthService {
     @Override
     @Transactional
     public ResponseEntity<JWTToken> performRegistration(
-        String firstName,
-        String lastName,
         String email,
-        String password,
-        String role,
-        String organization,
-        String cityName,
-        String districtName
+        String password
     ) {
         String encodedPassword = passwordEncoder.encode(password);
-        AuthUserInfo authUserInfo = new AuthUserInfo(firstName,
-            lastName,
-            email,
-            encodedPassword,
-            role,
-            organization,
-            cityName,
-            districtName
-        );
+        AuthUserInfo authUserInfo = new AuthUserInfo(email, encodedPassword);
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -74,8 +62,9 @@ public class JdbcAuthService implements AuthService {
 
         JWTToken jwtToken;
         if (violations.isEmpty()) {
-            Long userId = authRepository.performRegistration(authUserInfo);
-            String token = jwtUtil.generateToken(userId, email, encodedPassword);
+            Integer userId = authRepository.performRegistration(authUserInfo);
+            User user = authRepository.getUserById(userId);
+            String token = jwtUtil.generateToken(userId, email, user.role());
             jwtToken = new JWTToken();
             jwtToken.setJwtToken(token);
         } else {

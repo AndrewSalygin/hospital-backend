@@ -193,6 +193,13 @@
             <artifactId>java-jwt</artifactId>
             <version>4.4.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>12.2.0.jre8</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -250,7 +257,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>
-                                ${project.basedir}/src/main/resources/openapi/hospital-openapi-1.0.0.yaml
+                                ${project.basedir}/src/main/resources/openapi/hospital-openapi-1.2.0.yaml
                             </inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>com.andrewsalygin.hospital.api</apiPackage>

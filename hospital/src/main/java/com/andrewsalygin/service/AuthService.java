@@ -8,13 +8,7 @@ public interface AuthService {
     ResponseEntity<JWTToken> performLogin(String email, String password);
 
     ResponseEntity<JWTToken> performRegistration(
-        String firstName,
-        String lastName,
         String email,
-        String password,
-        String role,
-        String organization,
-        String cityName,
-        String districtName
+        String password
     );
 }

@@ -1,7 +1,7 @@
 package com.andrewsalygin.service.jdbc;
 
 import com.andrewsalygin.repository.UsersRepository;
-import com.greencats.service.UsersService;
+import com.andrewsalygin.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

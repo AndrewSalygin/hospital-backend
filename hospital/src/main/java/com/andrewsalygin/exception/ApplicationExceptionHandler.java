@@ -1,6 +1,6 @@
 package com.andrewsalygin.exception;
 
-import com.greencats.dto.response.ApiErrorResponse;
+import com.andrewsalygin.dto.response.ApiErrorResponse;
 import java.util.Arrays;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.TypeMismatchException;
@@ -70,7 +70,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @ExceptionHandler(HospitalException.class)
-    public ResponseEntity<ApiErrorResponse> handleSandiException(HospitalException ex) {
+    public ResponseEntity<ApiErrorResponse> handleHospitalException(HospitalException ex) {
         return new ResponseEntity<>(
             new ApiErrorResponse(
                 ex.getDescription(),

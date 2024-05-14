@@ -1,7 +1,7 @@
 package com.andrewsalygin.configuration.security.filters;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.greencats.util.JWTUtil;
+import com.andrewsalygin.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

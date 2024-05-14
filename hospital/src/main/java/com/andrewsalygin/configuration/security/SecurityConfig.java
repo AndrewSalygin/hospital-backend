@@ -1,7 +1,7 @@
 package com.andrewsalygin.configuration.security;
 
-import com.greencats.configuration.security.filters.JWTFilter;
-import com.greencats.security.UserDetailsServiceImpl;
+import com.andrewsalygin.configuration.security.filters.JWTFilter;
+import com.andrewsalygin.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +26,6 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults()).authorizeHttpRequests(
                 auth -> auth
                     .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/registration").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/cards", "/cards/").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/admin/users").hasRole("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "admin/users/", "/admin/userRights/").hasRole("ADMIN")
                     .anyRequest().authenticated())
             .userDetailsService(userDetailsService)
             .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

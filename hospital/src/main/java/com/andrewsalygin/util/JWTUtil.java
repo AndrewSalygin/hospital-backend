@@ -17,20 +17,20 @@ public class JWTUtil {
 
     public static final String EMAIL = "email";
 
-    public static final String TEAM_AND_PROJECT = "com.greencats.hackhathon";
+    public static final String TEAM_AND_PROJECT = "com.andrewsalygin.hospital";
 
     @Value("${secrets.jwt_secret}")
     private String secret;
 
     @SuppressWarnings("MagicNumber")
-    public String generateToken(Long id, String email, String password) {
-        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
+    public String generateToken(Integer id, String email, String role) {
+        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(20).toInstant());
 
         return JWT.create()
             .withSubject(USER_DETAILS)
             .withClaim("id", id)
             .withClaim(EMAIL, email)
-            .withClaim("password", password)
+            .withClaim("role", role)
             .withIssuedAt(new Date())
             .withIssuer(TEAM_AND_PROJECT)
             .withExpiresAt(expirationDate)
@@ -44,6 +44,6 @@ public class JWTUtil {
             .build();
 
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim(EMAIL).asString(); // ?? more fields?? ??
+        return jwt.getClaim(EMAIL).asString();
     }
 }

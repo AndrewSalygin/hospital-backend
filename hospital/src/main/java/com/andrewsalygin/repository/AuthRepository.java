@@ -1,14 +1,17 @@
 package com.andrewsalygin.repository;
 
 import com.andrewsalygin.dto.authorization.AuthUserInfo;
+import com.andrewsalygin.dto.security.User;
 
 public interface AuthRepository {
 
-    Long performLogin(AuthUserInfo authUserInfo);
+    Integer performLogin(AuthUserInfo authUserInfo);
 
-    Long performRegistration(AuthUserInfo authUserInfo);
+    Integer performRegistration(AuthUserInfo authUserInfo);
 
     String getEncodedPasswordByEmail(String email);
 
-    Long getUserIdByEmail(String email);
+    Integer getUserIdByEmail(String email);
+
+    User getUserById(Integer userId);
 }

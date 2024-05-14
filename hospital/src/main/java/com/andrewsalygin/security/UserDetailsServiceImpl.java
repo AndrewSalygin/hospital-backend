@@ -1,7 +1,6 @@
 package com.andrewsalygin.security;
 
 import com.andrewsalygin.dto.security.UserCredentials;
-import com.andrewsalygin.exception.UserBannedException;
 import com.andrewsalygin.repository.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +24,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         UserCredentials authUserInfo = usersRepository.findByEmail(username);
 
-        if (authUserInfo.isBanned()) {
-            throw new UserBannedException();
-        }
-
         List<String> roles = new ArrayList<>();
-        roles.add("USER"); // базовая роль
-        if (authUserInfo.isAdmin()) { // предполагаем, что есть метод isAdmin() в вашей модели данных
+        roles.add("USER");
+        if (authUserInfo.isAdmin()) {
             roles.add("ADMIN");
         }
 

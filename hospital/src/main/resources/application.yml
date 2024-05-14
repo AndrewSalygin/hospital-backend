@@ -2,20 +2,13 @@ app:
 
 spring:
   application:
-    name: hackathon
-  liquibase:
-    enabled: true
+    name: hospital
+
   datasource:
-    url: ${DATASOURCE_URL}
+    url: jdbc:${DATASOURCE}://${DATASOURCE_IP_ADDRESS}:${DATASOURCE_PORT};database=${DATABASE};encrypt=true;trustServerCertificate=true
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
-  security:
-    oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${GITHUB_CLIENT_ID}
-            client-secret: ${GITHUB_CLIENT_SECRET}
+    driver-class-name: ${DRIVER_CLASS_NAME}
 
 secrets:
   jwt_secret: ${JWT_SECRET}

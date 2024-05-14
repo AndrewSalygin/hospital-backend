@@ -5,6 +5,6 @@ import org.springframework.http.HttpStatus;
 public class UserAlreadyExistException extends HospitalException {
 
     public UserAlreadyExistException() {
-        super("UserAlreadyExistException", String.format("Пользователь уже существует"), HttpStatus.CONFLICT);
+        super("UserAlreadyExistException", "Пользователь уже существует", HttpStatus.CONFLICT);
     }
 }
