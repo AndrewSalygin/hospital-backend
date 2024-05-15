@@ -48,4 +48,9 @@ public class PatientsController implements PatientsApi {
     public ResponseEntity<IdResponse> registerPatient(PatientWithoutId patientWithoutId) {
         return patientsService.registerPatient(patientWithoutId);
     }
+
+    @Override
+    public ResponseEntity<Void> deletePatient(Integer id) {
+        return patientsService.deletePatient(id);
+    }
 }

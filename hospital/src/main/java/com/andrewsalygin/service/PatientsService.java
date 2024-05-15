@@ -20,4 +20,6 @@ public interface PatientsService {
     ResponseEntity<List<PatientShortInfo>> getPatients(Integer limit, Integer offset);
 
     ResponseEntity<IdResponse> registerPatient(PatientWithoutId patientWithoutId);
+
+    ResponseEntity<Void> deletePatient(Integer id);
 }

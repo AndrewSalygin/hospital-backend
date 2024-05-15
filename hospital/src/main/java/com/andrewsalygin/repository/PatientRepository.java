@@ -18,4 +18,6 @@ public interface PatientRepository {
     List<PatientShort> getPatients(Integer limit, Integer offset);
 
     Integer registerPatient(PatientWithoutIdDTO patientWithoutId);
+
+    void deletePatient(Integer id);
 }

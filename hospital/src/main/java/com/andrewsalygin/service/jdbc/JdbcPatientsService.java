@@ -83,4 +83,10 @@ public class JdbcPatientsService implements PatientsService {
 
         return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Void> deletePatient(Integer id) {
+        patientRepository.deletePatient(id);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
 }

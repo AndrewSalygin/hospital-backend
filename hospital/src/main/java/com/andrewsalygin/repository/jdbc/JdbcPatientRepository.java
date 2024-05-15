@@ -100,4 +100,11 @@ public class JdbcPatientRepository implements PatientRepository {
             param("phoneNumber", patientWithoutId.getPhoneNumber())
             .query(Integer.class).optional().orElseThrow(PatientNotFoundException::new);
     }
+
+    @Override
+    public void deletePatient(Integer id) {
+        client.sql("DELETE FROM patient WHERE patientId = :patientId")
+            .param("patientId", id)
+            .update();
+    }
 }
