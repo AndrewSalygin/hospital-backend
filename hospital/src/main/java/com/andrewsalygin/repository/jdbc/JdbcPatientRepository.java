@@ -85,7 +85,7 @@ public class JdbcPatientRepository implements PatientRepository {
     @Override
     public Integer registerPatient(PatientWithoutIdDTO patientWithoutId) {
         client.sql(
-                "INSERT INTO patient (lastName, firstName, middleName, gender, dateOfBirth, phoneNumber, insuranceInformation) " +
+                "INSERT INTO patientInsertV (lastName, firstName, middleName, gender, dateOfBirth, phoneNumber, insuranceInformation) " +
                     "VALUES (:lastName, :firstName, :middleName, :gender, :dateOfBirth, :phoneNumber, :insuranceInformation)")
             .param("lastName", patientWithoutId.getLastName())
             .param("firstName", patientWithoutId.getFirstName())

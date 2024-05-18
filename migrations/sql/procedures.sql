@@ -1,24 +1,28 @@
--- 1
+-- 1 (OK)
 -- Процедура для обновления информации о лекарствах
 -- CREATE PROCEDURE dbo.updateMedicationStock
 --     @medicationId int,
 --     @newCount int,
---     @newPrice float
+--     @newPrice float,
+--     @dateOfManufacture date,
+--     @expireDate date
 -- AS
 -- BEGIN
 --     UPDATE dbo.medication
---     SET availableCount = @newCount, price = @newPrice
+--     SET availableCount = @newCount, price = @newPrice, dateOfManufacture = @dateOfManufacture, expireDate = @expireDate
 --     WHERE medicationId = @medicationId;
 -- END;
 
 -- EXEC dbo.updateMedicationStock 
 --     @medicationId = 1, 
 --     @newCount = 150, 
---     @newPrice = 199.9;
+--     @newPrice = 199.9,
+--     @dateOfManufacture = '2024-05-15',
+--     @expireDate = '2027-05-15';
 
 -- SELECT * FROM dbo.medication;
 
--- 2
+-- 2 (OK)
 -- Процедура для расчета затрат на лечение пациента (выходные параметры)
 -- CREATE PROCEDURE dbo.calculateTreatmentCosts
 --     @treatmentId int,
@@ -59,7 +63,7 @@
 --         @totalCost AS totalCost;
 
 
--- 3
+-- 3 (OK)
 -- Подсчет количества операций по докторам за заданный период (курсор + циклические)
 -- CREATE PROCEDURE dbo.countSurgeriesByDoctor
 --     @startDate DATETIME,
@@ -115,7 +119,7 @@
 -- EXEC dbo.countSurgeriesByDoctor @startDate, @endDate;
 
 
--- 4
+-- 4 (OK)
 -- Получение первого освободившегося опытного доктора с операции (курсор + условные)
 -- CREATE PROCEDURE dbo.getFirstAvailableDoctorBySpecializationAndExperience
 --     @specializationName VARCHAR(100)
@@ -178,7 +182,7 @@
 -- EXEC dbo.getFirstAvailableDoctorBySpecializationAndExperience @specializationName = 'Пульмонолог'; -- Хирург -- Офтальмолог
 
 
--- 5
+-- 5 (OK)
 -- Расчет общей стоимости лекарств для операции (выходные параметры)
 -- CREATE PROCEDURE dbo.calculateTotalMedicationCost
 --     @surgeryId INT,

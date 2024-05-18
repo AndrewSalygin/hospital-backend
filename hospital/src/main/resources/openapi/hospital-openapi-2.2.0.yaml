@@ -1,0 +1,4115 @@
+openapi: 3.0.3
+
+info:
+  title: Hospital API
+  description: "API для Hospital"
+  version: 2.2.0
+
+servers:
+  - url: https://hospital.com/
+
+tags:
+  - name: patients
+    description: Работа с пациентами
+  - name: admin-patients
+    description: Админка (работа с пациентами)
+  - name: super-admin-patients
+    description: Супер админка (работа с пациентами)
+  - name: doctors
+    description: Работа с врачами
+  - name: admin-doctors
+    description: Админка (работа с врачами)
+  - name: super-admin-doctors
+    description: Супер админка (работа с врачами)
+  - name: specializations
+    description: Работа со специализациями
+  - name: super-admin-specializations
+    description: Супер админка (работа со специализациями)
+  - name: recipes
+    description: Работа с рецептами
+  - name: super-admin-recipes
+    description: Супер админка (Работа с рецептами)
+  - name: diseases
+    description: Работа с болезнями
+  - name: super-admin-diseases
+    description: Супер админка (Работа с болезнями)
+  - name: medications
+    description: Работа с медикаментами
+  - name: admin-medications
+    description: Админка (Работа с медикаментами)
+  - name: journal-patient
+    description: Работа с записями к врачу
+  - name: admin-journal-patient
+    description: Админка (Работа с записями к врачу)
+  - name: treatments
+    description: Работа с лечениями
+  - name: medicalProcedures
+    description: Работа с медицинскими процедурами
+  - name: super-admin-medicalProcedures
+    description: Супер админка (Работа с медицинскими процедурами)
+  - name: doctorsMedicalProcedures
+    description: Работа с медицинскими процедурами
+  - name: super-admin-doctorsMedicalProcedures
+    description: Супер админка (Работа с медицинскими процедурами)
+  - name: surgeries
+    description: Работа с операциями
+  - name: admin-surgeries
+    description: Админка (Работа с операциями)
+  - name: authorization
+    description: Авторизация
+  - name: super-admin-users
+    description: Супер админка (работа с пользователями)
+
+paths:
+  #################### patients ####################
+  /patients:
+    get:
+      operationId: getPatients
+      tags:
+        - patients
+      summary: Получить список пациентов
+      description: Возвращает список пациентов со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых пациентов
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству пациентов
+      responses:
+        '200':
+          description: Получен смещенный список пациентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientShortInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /patients/{patientId}:
+    get:
+      operationId: getPatient
+      tags:
+        - patients
+      summary: Получить пациента
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о пациенте успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /patients/recipes/{patientId}:
+    get:
+      operationId: getRecipesPatient
+      tags:
+        - patients
+      summary: Получить рецепты пациента
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id рецепта"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Рецепты пациента успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      operationId: addRecipeToPatient
+      tags:
+        - patients
+      summary: Выписка рецепта пациенту
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: medicationId
+          description: "Id медикамента"
+          required: true
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: expirationDate
+          description: "Конец действия рецепта"
+          required: true
+          explode: false
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: medicalHistoryNoteId
+          description: "Id приёма врача"
+          required: true
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Рецепт успешно добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Сущности с указанными Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "409":
+          description: Рецепт с таким id у данного пациента уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /patients/diseases/{patientId}:
+    post:
+      operationId: addDiseaseToPatient
+      tags:
+        - patients
+      summary: Добавить болезнь пациенту
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: diseaseId
+          description: "Id болезни"
+          required: true
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: dispensaryAccounting
+          description: "Стоит ли на диспансерном учете"
+          required: true
+          explode: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Болезнь успешно добавлена пациенту
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент или болезнь с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      operationId: deleteDiseaseFromPatient
+      tags:
+        - patients
+      summary: Удалить болезнь пациенту
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: diseaseId
+          description: "Id болезни"
+          required: true
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Болезнь успешно удалена у пациента
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент или болезнь с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    get:
+      operationId: getDiseasesPatient
+      tags:
+        - patients
+      summary: Получить болезни пациента
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Болезни пациента успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DiseaseFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /patients/diseases:
+    get:
+      operationId: getPatientsDiseases
+      tags:
+        - patients
+      summary: Получить список пациентов с их болезнями
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых записей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству записей
+      responses:
+        '200':
+          description: Список пациентов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientWithDisease'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /patients/meeting/{patientId}:
+    get:
+      operationId: getPatientMeetings
+      tags:
+        - patients
+      summary: Получить список приёмов пациента
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых записей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству записей
+      responses:
+        '200':
+          description: Список приёмов пациента успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeetingJournalNote'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### patients ####################
+
+  #################### admin-patients ####################
+  /admin/patients:
+    post:
+      operationId: registerPatient
+      tags:
+        - admin-patients
+      summary: Добавить нового пациента
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientWithoutId'
+        required: true
+      responses:
+        '200':
+          description: Пациент успешно добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /admin/patients/{patientId}:
+    put:
+      operationId: editPatient
+      tags:
+        - admin-patients
+      summary: Изменить информацию о пациенте
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatientWithoutId'
+        required: true
+      responses:
+        '200':
+          description: Информация о пациенте успешно изменена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /admin/patients/detach/{patientId}:
+    patch:
+      operationId: detachPatient
+      tags:
+        - admin-patients
+      summary: Открепить пациента от больницы
+      parameters:
+        - name: patientId
+          in: path
+          description: "Id пациента, который открепляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Пациент успешно откреплен
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /admin/patients/attach/{patientId}:
+    patch:
+      operationId: attachPatient
+      tags:
+        - admin-patients
+      summary: Прикрепить пациента от больницы
+      parameters:
+        - name: patientId
+          in: path
+          description: "Id пациента, который прикрепляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Пациент успешно прикреплён
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /patients/journal/meeting:
+    post:
+      operationId: addPatientNote
+      tags:
+        - admin-patients
+      summary: Записать пациента на приём
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMeetingJournalNote'
+      responses:
+        '200':
+          description: Пациент успешно записан на приём
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент или доктор с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /patients/journal/meeting/{medicalHistoryNoteId}:
+    delete:
+      operationId: deletePatientNote
+      tags:
+        - admin-patients
+      summary: Удаление записи на приём
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Запись успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Запись с указанным id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    put:
+      operationId: changePatientNote
+      tags:
+        - admin-patients
+      summary: Изменение записи на приём
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMeetingJournalNote'
+      responses:
+        '200':
+          description: Запись успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медикамент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### admin-patients ####################
+
+  #################### super-admin-patients ####################
+  /super/admin/patients/{patientId}:
+    delete:
+      operationId: deletePatient
+      tags:
+        - super-admin-patients
+      summary: Удаление пациента
+      parameters:
+        - name: patientId
+          required: true
+          in: path
+          description: "Id пациента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Пациент успешно удалён
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-patients ####################
+
+  #################### doctors ####################
+  /doctors:
+    get:
+      operationId: getDoctors
+      tags:
+        - doctors
+      summary: Получить список врачей
+      description: Возвращает список врачей со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых врачей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству врачей
+      responses:
+        '200':
+          description: Получен смещенный список врачей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorShortInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /doctors/{doctorId}:
+    get:
+      operationId: getDoctor
+      tags:
+        - doctors
+      summary: Получить доктора
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о докторе успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /doctors/specializations/{doctorId}:
+    get:
+      operationId: getDoctorSpecializations
+      tags:
+        - doctors
+      summary: Получить специализации доктора
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о специализациях доктора успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorSpecialization'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### doctors ####################
+
+  #################### admin-doctors ####################
+  /doctors/{doctorId}/surgeries:
+    get:
+      operationId: getSurgeriesForDoctor
+      tags:
+        - admin-doctors
+      summary: Получить операции, которые ведет доктор
+      parameters:
+        - name: doctorId
+          in: path
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список операций успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SurgeryShortInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /doctors/firstAvailable:
+    get:
+      operationId: getFirstAvailableDoctorBySpecializationAndExperience
+      tags:
+        - admin-doctors
+      summary: Получение первого освободившегося опытного доктора по специализации
+      parameters:
+        - name: specializationName
+          in: query
+          description: Название специализации
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Первый освободившийся опытный доктор успешно получен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DoctorInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Специализация не найдена или врачи данной специализации заняты
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### admin-doctors ####################
+
+  #################### super-admin-doctors ####################
+  /super/admin/doctors/{doctorId}:
+    delete:
+      operationId: deleteDoctor
+      tags:
+        - super-admin-doctors
+      summary: Удаление врача
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Доктор успешно удалён
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /super/admin/doctors/specialization/{doctorId}:
+    post:
+      operationId: addSpecializationToDoctor
+      tags:
+        - super-admin-doctors
+      summary: Назначить специализацию доктору
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: specializationId
+          required: true
+          in: query
+          description: "Id специализации"
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: yearsOfExperience
+          required: true
+          in: query
+          description: "Количество лет опыта"
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Доктору успешно назначена специализация
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор или специализация с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    patch:
+      operationId: changeSpecializationExperienceDoctor
+      tags:
+        - super-admin-doctors
+      summary: Изменить опыт доктора по специализации
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: specializationId
+          required: true
+          in: query
+          description: "Id специализации"
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: yearsOfExperience
+          required: true
+          in: query
+          description: "Количество лет опыта"
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Доктору успешно изменен опыт по специализации
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор или специализация с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  #################### super-admin-doctors ####################
+
+  #################### specializations ####################
+  /specializations:
+    get:
+      operationId: getSpecializations
+      tags:
+        - specializations
+      summary: Получить список специализаций
+      responses:
+        '200':
+          description: Специализации успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Specialization'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /specializations/doctors/{specializationId}:
+    get:
+      operationId: getSpecializationsDoctors
+      tags:
+        - specializations
+      summary: Получить список врачей по специализации
+      parameters:
+        - name: specializationId
+          required: true
+          in: path
+          description: "Id специализации"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Врачи успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorShortInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### specializations ####################
+
+  #################### admin-specializations ####################
+
+  #################### admin-specializations ####################
+
+  #################### super-admin-specializations ####################
+  /super/admin/specializations:
+    post:
+      operationId: addSpecialization
+      tags:
+        - super-admin-specializations
+      summary: Добавление специализации
+      parameters:
+        - in: query
+          name: specializationName
+          description: "Название специализации"
+          required: true
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Специализация успешно добавлена
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "409":
+          description: Специализация с таким именем уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /super/admin/specialization/{specializationId}:
+    delete:
+      operationId: deleteSpecialization
+      tags:
+        - super-admin-specializations
+      summary: Удаление специализации
+      parameters:
+        - name: specializationId
+          in: path
+          description: "Id специализации, которая удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Специализация успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Специализация с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-specializations ####################
+
+  #################### recipes ####################
+  /recipes:
+    get:
+      operationId: getRecipes
+      tags:
+        - recipes
+      summary: Получить рецепты
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых рецептов
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству рецептов
+      responses:
+        '200':
+          description: Информация о рецептах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RecipeFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /recipes/{recipeId}:
+    get:
+      operationId: getRecipe
+      tags:
+        - recipes
+      summary: Получить рецепт
+      parameters:
+        - name: recipeId
+          required: true
+          in: path
+          description: "Id рецепта"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о рецепте успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecipeFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Рецепт с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### recipes ####################
+
+  #################### super-admin-recipes ####################
+  /super/admin/recipes/{recipeId}:
+    delete:
+      operationId: deleteRecipe
+      tags:
+        - super-admin-recipes
+      summary: Удаление рецепта
+      parameters:
+        - name: recipeId
+          in: path
+          description: "Id рецепта, который удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: Рецепт успешно удален
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Рецепт с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-recipes ####################
+
+  #################### diseases ####################
+  /diseases:
+    get:
+      operationId: getDiseases
+      tags:
+        - diseases
+      summary: Получить список болезней
+      description: Возвращает список болезней со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых болезней
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству болезней
+      responses:
+        '200':
+          description: Информация о болезнях успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DiseaseFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /diseases/{diseaseId}:
+    get:
+      operationId: getDisease
+      tags:
+        - diseases
+      summary: Получить болезнь
+      parameters:
+        - name: diseaseId
+          required: true
+          in: path
+          description: "Id болезни"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о болезни успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiseaseFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Болезнь с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /diseases/patients/{diseaseId}:
+    get:
+      operationId: getPatientsWithDisease
+      tags:
+        - diseases
+      summary: Получить пациентов с болезнью
+      parameters:
+        - name: diseaseId
+          required: true
+          in: path
+          description: "Id болезни"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о пациентах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientShortInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Болезнь с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### diseases ####################
+
+  #################### super-admin-diseases ####################
+  /super/admin/diseases:
+    post:
+      operationId: addDisease
+      tags:
+        - super-admin-diseases
+      summary: Добавить болезнь
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiseaseWithoutId'
+        required: true
+      responses:
+        "200":
+          description: Болезнь успешно добавлена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /super/admin/diseases/{diseaseId}:
+    put:
+      operationId: editDisease
+      tags:
+        - super-admin-diseases
+      summary: Изменить болезнь
+      parameters:
+        - name: diseaseId
+          required: true
+          in: path
+          description: "Id болезни"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiseaseWithoutId'
+      responses:
+        '200':
+          description: Информация о болезни успешно изменена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiseaseFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Болезнь с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-diseases ####################
+
+  #################### medications ####################
+  /medications:
+    get:
+      operationId: getMedications
+      tags:
+        - medications
+      summary: Получить медикаменты
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых медикаментов
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству медикаментов
+      responses:
+        '200':
+          description: Информация о медикаментах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /medications/{medicationId}:
+    get:
+      operationId: getMedication
+      tags:
+        - medications
+      summary: Получить медикамент
+      parameters:
+        - name: medicationId
+          required: true
+          in: path
+          description: "Id медикамента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о медикаменте успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медикамент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### medications ####################
+
+  #################### admin-medications ####################
+  /admin/medications/update/{medicationId}:
+    patch:
+      operationId: setNewMedicationFeatures
+      tags:
+        - admin-medications
+      summary: Обновить информацию о медикаменте
+      parameters:
+        - name: medicationId
+          required: true
+          in: path
+          description: "Id медикамента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewInfoMedication'
+        required: true
+      responses:
+        '200':
+          description: Информация о медикаменте успешно обновлена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медикамент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /admin/medications:
+    post:
+      operationId: addMedication
+      tags:
+        - admin-medications
+      summary: Добавить новый медикамент
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicationWithoutId'
+        required: true
+      responses:
+        '200':
+          description: Медикамент успешно добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /admin/medications/{medicationId}:
+    delete:
+      operationId: deleteMedication
+      tags:
+        - admin-medications
+      summary: Удаление медикамента
+      parameters:
+        - name: medicationId
+          required: true
+          in: path
+          description: "Id медикамента"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Медикамент успешно удалён
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медикамент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### admin-medications ####################
+
+  #################### journal-patient ####################
+  /journal/meeting:
+    get:
+      operationId: getNotes
+      tags:
+        - journal-patient
+      summary: Получить список записей
+      description: Возвращает список записей со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых записей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству записей
+      responses:
+        '200':
+          description: Получен смещенный список записей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MeetingJournalNote'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /journal/meeting/{medicalHistoryNoteId}:
+    get:
+      operationId: getNote
+      tags:
+        - journal-patient
+      summary: Получить запись
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о записи успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeetingJournalNoteFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Запись с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /journal/meeting/note/anamnesis/{medicalHistoryNoteId}:
+    patch:
+      operationId: editAnamnesis
+      tags:
+        - journal-patient
+      summary: Изменить анамнез приёма
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: anamnesis
+          in: query
+          description: Анамнез
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Информация об анамнезе успешно изменена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /journal/meeting/note/disease/{medicalHistoryNoteId}:
+    post:
+      operationId: addDiseaseToNote
+      tags:
+        - journal-patient
+      summary: Добавить болезнь в запись о приёме
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: diseaseId
+          in: query
+          description: Id болезни
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Болезнь успешно добавлена в приём
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём или болезнь с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      operationId: deleteDiseaseFromNote
+      tags:
+        - journal-patient
+      summary: Удалить болезнь из записи о приёме
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: diseaseId
+          in: query
+          description: Id болезни
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Болезнь успешно удалена из приёма
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём или болезнь с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /journal/meeting/note/treatment/{medicalHistoryNoteId}:
+    post:
+      operationId: addTreatmentToDiseaseInNote
+      tags:
+        - journal-patient
+      summary: Добавить лечение болезни в приёме
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: diseaseId
+          in: query
+          description: Id болезни
+          required: true
+          schema:
+            type: integer
+        - name: treatmentId
+          in: query
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно добавлено
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём, болезнь или лечение с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      operationId: deleteTreatmentForDiseaseInNote
+      tags:
+        - journal-patient
+      summary: Удалить лечение болезни из приёма
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: diseaseId
+          in: query
+          description: Id болезни
+          required: true
+          schema:
+            type: integer
+        - name: treatmentId
+          in: query
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно удалено из приёма
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём, болезнь или лечение с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    patch:
+      operationId: changeResultsOfTreatmentForDiseaseInNote
+      tags:
+        - journal-patient
+      summary: Изменить результат лечения болезни
+      parameters:
+        - name: medicalHistoryNoteId
+          required: true
+          in: path
+          description: "Id записи на приём"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: diseaseId
+          in: query
+          description: Id болезни
+          required: true
+          schema:
+            type: integer
+        - name: treatmentId
+          in: query
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: resultsOfTreatment
+          in: query
+          description: Результат лечения
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Результат лечения успешно изменён
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём, болезнь или лечение с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### journal-patient ####################
+
+  #################### treatments ####################
+  /treatments:
+    post:
+      operationId: addTreatment
+      tags:
+        - treatments
+      summary: Добавить лечение
+      parameters:
+        - name: doctorId
+          in: query
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+        - name: medicationId
+          in: query
+          description: Id медикамента
+          required: true
+          schema:
+            type: integer
+        - name: treatmentTime
+          in: query
+          description: Количество дней
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно добавлено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Приём, болезнь или лечение с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/{treatmentId}:
+    delete:
+      operationId: deleteTreatment
+      tags:
+        - treatments
+      summary: Удалить лечение
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно удалено
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+    patch:
+      operationId: updateTreatment
+      tags:
+        - treatments
+      summary: Изменить лечение (количество дней)
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: treatmentTime
+          in: query
+          description: Новое количество дней лечения
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно обновлено
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/medicalProcedures/{treatmentId}:
+    get:
+      operationId: getMedicalProceduresWithTreatment
+      tags:
+        - treatments
+      summary: Получить медицинские процедуры лечения
+      parameters:
+        - name: treatmentId
+          required: true
+          in: path
+          description: "Id лечения"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о медицинских процедурах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalProcedureFullInfoWithTreatmentDays'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      operationId: addMedicalProcedureToTreatment
+      tags:
+        - treatments
+      summary: Добавить медицинскую процедуру к лечению
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: procedureId
+          in: query
+          description: Id медицинской процедуры
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Медицинская процедура успешно добавлена к лечению
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Лечение или медицинская процедура с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/medications/{treatmentId}:
+    get:
+      operationId: getMedicationsWithTreatment
+      tags:
+        - treatments
+      summary: Получить медикаменты лечения
+      parameters:
+        - name: treatmentId
+          required: true
+          in: path
+          description: "Id лечения"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о медикаментах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationsFullInfoWithTreatmentDays'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      operationId: addMedicationToTreatment
+      tags:
+        - treatments
+      summary: Добавить медикамент к лечению
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: medicationId
+          in: query
+          description: Id медикамента
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Медикамент успешно добавлен к лечению
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Лечение или медикамент с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/price/{treatmentId}:
+    get:
+      operationId: getTreatmentPrice
+      tags:
+        - treatments
+      summary: Получить стоимость лечения
+      parameters:
+        - name: treatmentId
+          required: true
+          in: path
+          description: "Id лечения"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о стоимости лечения успешно получена
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/TreatmentPrice'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/medicalProcedures/{treatmentId}/{procedureId}:
+    delete:
+      operationId: deleteMedicalProcedureFromTreatment
+      tags:
+        - treatments
+      summary: Удалить медицинскую процедуру из лечения
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: procedureId
+          in: path
+          description: Id медицинской процедуры
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Медицинская процедура успешно удалена из лечения
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Лечение или медицинская процедура с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /treatments/medications/{treatmentId}/{medicationId}:
+    delete:
+      operationId: deleteMedicationFromTreatment
+      tags:
+        - treatments
+      summary: Удалить медикамент из лечения
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+        - name: medicationId
+          in: path
+          description: Id медикамента
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Медикамент успешно удален из лечения
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Лечение или медикамент с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### treatments ####################
+
+  #################### admin-journal-patient ####################
+  /admin/journal/meeting/{medicalHistoryNoteId}:
+    delete:
+      operationId: deleteNote
+      tags:
+        - admin-journal-patient
+      summary: Удаление записи
+      parameters:
+        - name: medicalHistoryNoteId
+          in: path
+          description: "Id записи, которая удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: Запись успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Запись с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### admin-journal-patient ####################
+
+  #################### medicalProcedures ####################
+  /medicalProcedures:
+    get:
+      operationId: getMedicalProcedures
+      tags:
+        - medicalProcedures
+      summary: Получить список медицинских процедур
+      description: Возвращает медицинских процедур со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых медицинских процедур
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству медицинских процедур
+      responses:
+        '200':
+          description: Информация о медицинских процедурах успешно получена
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalProcedureFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /medicalProcedures/{medicalProcedureId}:
+    get:
+      operationId: getMedicalProcedure
+      tags:
+        - medicalProcedures
+      summary: Получить медицинскую процедуру
+      parameters:
+        - name: medicalProcedureId
+          required: true
+          in: path
+          description: "Id медицинской процедуры"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Информация о медицинской процедуре успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalProcedureFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медицинская процедура с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### medicalProcedures ####################
+
+  #################### super-admin-medicalProcedures ####################
+  /super/admin/medicalProcedures:
+    post:
+      operationId: addMedicalProcedure
+      tags:
+        - super-admin-medicalProcedures
+      summary: Добавить медицинскую процедуру
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalProcedureWithoutId'
+        required: true
+      responses:
+        "200":
+          description: Медицинская процедура успешно добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /super/admin/medicalProcedures/{medicalProcedureId}:
+    put:
+      operationId: editMedicalProcedure
+      tags:
+        - super-admin-medicalProcedures
+      summary: Изменить медицинскую процедуру
+      parameters:
+        - name: medicalProcedureId
+          required: true
+          in: path
+          description: "Id медицинской процедуры"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MedicalProcedureWithoutId'
+      responses:
+        '200':
+          description: Информация о медицинской процедуры успешно изменена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiseaseFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медицинская процедура с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      operationId: deleteMedicalProcedureId
+      tags:
+        - super-admin-medicalProcedures
+      summary: Удалить медицинскую процедуру
+      parameters:
+        - name: medicalProcedureId
+          required: true
+          in: path
+          description: "Id медицинской процедуры"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Медицинская процедура успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Медицинская процедура с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-medicalProcedures ####################
+
+  #################### doctorsMedicalProcedures ####################
+  /doctorsProcedures/doctors/{procedureId}:
+    get:
+      operationId: getDoctorsForProcedure
+      tags:
+        - doctorsMedicalProcedures
+      summary: Получить врачей, занимающихся процедурой
+      parameters:
+        - name: procedureId
+          in: path
+          description: Id медицинской процедуры
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список врачей успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorShortInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Процедура с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /doctorsProcedures/procedures/{doctorId}:
+    get:
+      operationId: getProceduresForDoctor
+      tags:
+        - doctorsMedicalProcedures
+      summary: Получить процедуры, которые ведет врач
+      parameters:
+        - name: doctorId
+          in: path
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список процедур успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicalProcedureFullInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### doctorsMedicalProcedures ####################
+
+  #################### super-admin-doctorsMedicalProcedures ####################
+  /doctorsProcedures:
+    post:
+      operationId: addDoctorProcedure
+      tags:
+        - super-admin-doctorsMedicalProcedures
+      summary: Назначить медицинскую процедуру врачу
+      parameters:
+        - name: doctorId
+          in: query
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+        - name: procedureId
+          in: query
+          description: Id медицинской процедуры
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Процедура успешно назначена врачу
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Доктор или процедура с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /doctorsProcedures/{doctorId}/{procedureId}:
+    delete:
+      operationId: deleteDoctorProcedure
+      tags:
+        - super-admin-doctorsMedicalProcedures
+      summary: Удалить медицинскую процедуру у врача
+      parameters:
+        - name: doctorId
+          in: path
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+        - name: procedureId
+          in: path
+          description: Id медицинской процедуры
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Процедура успешно удалена у врача
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Доктор или процедура с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-doctorsMedicalProcedures ####################
+
+  #################### surgeries ####################
+
+  /surgeries/{surgeryId}/medications:
+    get:
+      operationId: getMedicationsForSurgery
+      tags:
+        - surgeries
+      summary: Получить медикаменты, использованные в операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список медикаментов успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationWithAmount'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      operationId: addMedicationToSurgery
+      tags:
+        - admin-surgeries
+      summary: Добавить лекарство в операцию
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: medicationId
+          in: query
+          description: Id лекарства
+          required: true
+          schema:
+            type: integer
+        - name: amount
+          in: query
+          description: Количество лекарства
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лекарство успешно добавлено в операцию
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция или лекарство с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}/description:
+    patch:
+      operationId: updateSurgeryDescription
+      tags:
+        - surgeries
+      summary: Изменение описания операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: surgicalProcedureDescription
+          in: query
+          description: Новое описание хирургической процедуры
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Описание операции успешно обновлено
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/patient/{patientId}:
+    get:
+      operationId: getSurgeriesByPatient
+      tags:
+        - surgeries
+      summary: Получить все операции пациента
+      parameters:
+        - name: patientId
+          in: path
+          description: Id пациента
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список операций пациента успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SurgeryFullInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Пациент с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  #################### surgeries ####################
+
+  #################### admin-surgeries ####################
+  /surgeries:
+    get:
+      operationId: getAllSurgeries
+      tags:
+        - surgeries
+      summary: Получить все операции
+      description: Возвращает список операций со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых операций
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству операций
+      responses:
+        '200':
+          description: Список всех операций успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SurgeryFullInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      operationId: createSurgery
+      tags:
+        - admin-surgeries
+      summary: Создание новой операции
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SurgeryFullInfoWithoutId"
+      responses:
+        '200':
+          description: Операция успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}:
+    get:
+      operationId: getSurgeryById
+      tags:
+        - surgeries
+      summary: Получить информацию об операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Информация об операции успешно получена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurgeryFullInfo'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    delete:
+      operationId: deleteSurgery
+      tags:
+        - admin-surgeries
+      summary: Удалить операцию
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Операция успешно удалена
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    put:
+      operationId: updateSurgery
+      tags:
+        - admin-surgeries
+      summary: Изменить информацию об операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SurgeryFullInfoWithoutId'
+      responses:
+        '200':
+          description: Информация об операции успешно обновлена
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}/doctors:
+    get:
+      operationId: getDoctorsForSurgery
+      tags:
+        - admin-surgeries
+      summary: Получить врачей, которые занимаются операцией, и их рабочие часы
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Список врачей и их рабочие часы успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorWithWorkingHours"
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+    post:
+      operationId: addDoctorToSurgery
+      tags:
+        - admin-surgeries
+      summary: Добавить врача в операцию
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: doctorId
+          in: query
+          description: Id врача
+          required: true
+          schema:
+            type: integer
+        - name: workingHours
+          in: query
+          description: Фактически количество рабочих часов
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: scheduledWorkingHours
+          in: query
+          description: Запланированное количество рабочих часов
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: Врач успешно добавлен в операцию
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция или врач с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+    patch:
+      operationId: updateDoctorWorkingHours
+      tags:
+        - admin-surgeries
+      summary: Изменить количество рабочих часов врача в операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: doctorId
+          in: query
+          description: Id врача
+          required: true
+          schema:
+            type: integer
+        - name: workingHours
+          in: query
+          description: Новое количество рабочих часов
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: scheduledWorkingHours
+          in: query
+          description: Новое запланированное количество рабочих часов
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: Количество рабочих часов врача успешно обновлено
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция или врач с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/countByDoctor:
+    get:
+      operationId: countSurgeriesByDoctor
+      tags:
+        - admin-surgeries
+      summary: Подсчет количества операций по докторам за заданный период
+      parameters:
+        - name: startDate
+          in: query
+          description: Начальная дата периода
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          description: Конечная дата периода
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Количество операций по докторам успешно получено
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorSurgeryCount'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}/totalMedicationCost:
+    get:
+      operationId: calculateTotalMedicationCost
+      tags:
+        - admin-surgeries
+      summary: Расчет общей стоимости лекарств для операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Общая стоимость лекарств для операции успешно рассчитана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalCost'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}/medications/{medicationId}:
+    delete:
+      operationId: removeMedicationFromSurgery
+      tags:
+        - admin-surgeries
+      summary: Удалить лекарство из операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: medicationId
+          in: path
+          description: Id лекарства
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лекарство успешно удалено из операции
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция или лекарство с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /surgeries/{surgeryId}/doctors/{doctorId}:
+    delete:
+      operationId: removeDoctorFromSurgery
+      tags:
+        - admin-surgeries
+      summary: Удалить врача из операции
+      parameters:
+        - name: surgeryId
+          in: path
+          description: Id операции
+          required: true
+          schema:
+            type: integer
+        - name: doctorId
+          in: path
+          description: Id врача
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Врач успешно удален из операции
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
+          description: Операция или врач с указанным Id не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### admin-surgeries ####################
+
+  #################### authorization ####################
+  /auth/registration:
+    post:
+      operationId: performRegistration
+      tags:
+        - authorization
+      summary: Регистрация пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+        required: true
+      responses:
+        "200":
+          description: Пользователь создан успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "409":
+          description: Пользователь с таким email уже зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /auth/login:
+    post:
+      operationId: performLogin
+      tags:
+        - authorization
+      summary: Авторизация пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizeUserRequest'
+        required: true
+      responses:
+        "200":
+          description: Пользователь авторизован успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с такими данными не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### authorization ####################
+
+  #################### super-admin-users ####################
+  /super/admin/users:
+    get:
+      operationId: getUsers
+      tags:
+        - super-admin-users
+      summary: Получить список пользователей
+      description: Возвращает список пользователей со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых пользователей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству пользователей
+      responses:
+        '200':
+          description: Получен смещенный список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfoForAdminPanel'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+
+  /super/admin/users/{userId}:
+    delete:
+      operationId: deleteUser
+      tags:
+        - super-admin-users
+      summary: Удаление пользователя
+      parameters:
+        - name: userId
+          in: path
+          description: "Id пользователя, который удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: Пользователя успешно удален
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+
+  /super/admin/userRights/{userId}:
+    post:
+      operationId: changeUserRights
+      parameters:
+        - name: userId
+          in: path
+          description: Id пользователя
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: role
+          in: query
+          description: Роль пользователя
+          required: true
+          schema:
+            type: string
+      tags:
+        - super-admin-users
+      summary: Изменить права пользователя
+      responses:
+        "200":
+          description: Права пользователя успешно обновлены
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+#################### super-admin-users ####################
+
+components:
+  schemas:
+    TotalCost:
+      type: object
+      properties:
+        totalMedicationCost:
+          type: number
+          format: float
+    DoctorInfo:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+    DoctorSurgeryCount:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+        lastName:
+          type: string
+        firstName:
+          type: string
+        middleName:
+          type: string
+        surgeriesCount:
+          type: integer
+    MedicationWithAmount:
+      type: object
+      properties:
+        medicationId:
+          type: integer
+        amount:
+          type: integer
+    DoctorWithWorkingHours:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+        workingHours:
+          type: number
+          format: float
+        scheduledWorkingHours:
+          type: number
+          format: float
+    SurgeryFullInfo:
+      type: object
+      properties:
+        surgeryId:
+          type: integer
+          description: Id операции
+        patientId:
+          type: integer
+          description: Id пациента
+        scheduledDateTime:
+          type: string
+          format: date-time
+          description: Запланированное время операции
+        startTime:
+          type: string
+          format: date-time
+          description: Время начала операции
+        endTime:
+          type: string
+          format: date-time
+          description: Время конца операции
+        surgeryType:
+          type: string
+          description: Тип операции
+        surgicalProcedureDescription:
+          type: string
+          description: Описание хирургической процедуры
+        emergency:
+          type: boolean
+          description: Экстренная операция
+    SurgeryFullInfoWithoutId:
+      type: object
+      properties:
+        patientId:
+          type: integer
+          description: Id пациента
+        scheduledDateTime:
+          type: string
+          format: date-time
+          description: Запланированное время операции
+        startTime:
+          type: string
+          format: date-time
+          description: Время начала операции
+        endTime:
+          type: string
+          format: date-time
+          description: Время конца операции
+        surgeryType:
+          type: string
+          description: Тип операции
+        surgicalProcedureDescription:
+          type: string
+          description: Описание хирургической процедуры
+        emergency:
+          type: boolean
+          description: Экстренная операция
+    SurgeryShortInfo:
+      type: object
+      properties:
+        surgeryId:
+          type: integer
+        patientId:
+          type: integer
+        scheduledDateTime:
+          type: string
+          format: date-time
+        surgeryType:
+          type: string
+    TreatmentPrice:
+      type: object
+      properties:
+        totalMedicationsCost:
+          type: number
+          description: Стоимость лекарств
+          format: float
+        totalMedicalProceduresCost:
+          type: number
+          description: Стоимость медицинских процедур
+          format: float
+        totalCost:
+          type: number
+          description: Общая стоимость
+          format: float
+    MedicationsFullInfoWithTreatmentDays:
+      type: object
+      properties:
+        medicationId:
+          type: integer
+          description: Id медикамента
+        medicationName:
+          type: string
+          description: Название медикамента
+        medicationForm:
+          type: string
+          description: Форма медикамента
+        dosage:
+          type: string
+          description: Дозировка медикамента
+        manufacturer:
+          type: string
+          description: Производитель медикамента
+        countryOfManufacture:
+          type: string
+          description: Страна производства медикамента
+        dateOfManufacture:
+          type: string
+          description: Дата производства медикамента
+          format: date
+        expireDate:
+          type: string
+          description: Дата срока годности медикамента
+          format: date
+        isPrescription:
+          type: boolean
+          description: Рецептурный ли препарат
+        price:
+          type: number
+          description: Цена
+          format: float
+        availableCount:
+          type: integer
+          description: Количество в наличии
+        treatmentDays:
+          type: integer
+          description: Количество дней лечения
+    MedicalProcedureFullInfoWithTreatmentDays:
+      type: object
+      properties:
+        medicalProcedureId:
+          type: integer
+          description: Id медицинской процедуры
+        medicalProcedureName:
+          type: string
+          description: Название медицинской процедуры
+        price:
+          type: number
+          description: Цена
+          format: float
+        treatmentDays:
+          type: integer
+          description: Количество дней лечения
+    MedicalProcedureWithoutId:
+      type: object
+      properties:
+        medicalProcedureName:
+          type: string
+          description: Название медицинской процедуры
+        price:
+          type: number
+          description: Цена
+          format: float
+    MedicalProcedureFullInfo:
+      type: object
+      properties:
+        medicalProcedureId:
+          type: integer
+          description: Id медицинской процедуры
+        medicalProcedureName:
+          type: string
+          description: Название медицинской процедуры
+        price:
+          type: number
+          description: Цена
+          format: float
+    MeetingJournalNoteFullInfo:
+      type: object
+      properties:
+        medicalHistoryNoteId:
+          type: integer
+          description: Id записи
+        patientId:
+          type: integer
+          description: Id пациента
+        doctorId:
+          type: integer
+          description: Id доктора
+        initialAdmission:
+          type: boolean
+          description: Первичный приём
+        discharge:
+          type: boolean
+          description: Выписка
+        patientStatus:
+          type: string
+          description: Статус пациента
+        admissionDateTime:
+          type: string
+          description: Дата и время приёма
+          format: date-time
+        anamnesis:
+          type: string
+          description: Анамнез
+        diseaseList:
+          type: array
+          items:
+            type: object
+            properties:
+              diseaseId:
+                type: integer
+                description: Id болезни
+              treatmentId:
+                type: integer
+                description: Id лечения
+              resultsOfTreatment:
+                type: string
+                description: Результаты лечения
+    MeetingJournalNote:
+      type: object
+      properties:
+        medicalHistoryNoteId:
+          type: integer
+          description: Id записи
+        patientId:
+          type: integer
+          description: Id пациента
+        doctorId:
+          type: integer
+          description: Id доктора
+        initialAdmission:
+          type: boolean
+          description: Первичный приём
+        discharge:
+          type: boolean
+          description: Выписка
+        patientStatus:
+          type: string
+          description: Статус пациента
+        admissionDateTime:
+          type: string
+          description: Дата и время приёма
+          format: date-time
+    CreateMeetingJournalNote:
+      type: object
+      properties:
+        patientId:
+          type: integer
+          description: Id пациента
+        doctorId:
+          type: integer
+          description: Id доктора
+        initialAdmission:
+          type: boolean
+          description: Первичный приём
+        discharge:
+          type: boolean
+          description: Выписка
+        patientStatus:
+          type: string
+          description: Статус пациента
+        admissionDateTime:
+          type: string
+          description: Дата и время приёма
+          format: date-time
+    NewInfoMedication:
+      type: object
+      properties:
+        availableCount:
+          type: integer
+          description: Количество в наличии
+        price:
+          type: number
+          description: Цена
+          format: float
+        dateOfManufacture:
+          type: string
+          description: Дата производства медикамента
+          format: date
+        expireDate:
+          type: string
+          description: Дата срока годности медикамента
+          format: date
+    MedicationWithoutId:
+      type: object
+      properties:
+        medicationName:
+          type: string
+          description: Название медикамента
+        medicationForm:
+          type: string
+          description: Форма медикамента
+        dosage:
+          type: string
+          description: Дозировка медикамента
+        manufacturer:
+          type: string
+          description: Производитель медикамента
+        countryOfManufacture:
+          type: string
+          description: Страна производства медикамента
+        dateOfManufacture:
+          type: string
+          description: Дата производства медикамента
+          format: date
+        expireDate:
+          type: string
+          description: Дата срока годности медикамента
+          format: date
+        isPrescription:
+          type: boolean
+          description: Рецептурный ли препарат
+        price:
+          type: number
+          description: Цена
+          format: float
+        availableCount:
+          type: integer
+          description: Количество в наличии
+    MedicationFullInfo:
+      type: object
+      properties:
+        medicationId:
+          type: integer
+          description: Id медикамента
+        medicationName:
+          type: string
+          description: Название медикамента
+        medicationForm:
+          type: string
+          description: Форма медикамента
+        dosage:
+          type: string
+          description: Дозировка медикамента
+        manufacturer:
+          type: string
+          description: Производитель медикамента
+        countryOfManufacture:
+          type: string
+          description: Страна производства медикамента
+        dateOfManufacture:
+          type: string
+          description: Дата производства медикамента
+          format: date
+        expireDate:
+          type: string
+          description: Дата срока годности медикамента
+          format: date
+        isPrescription:
+          type: boolean
+          description: Рецептурный ли препарат
+        price:
+          type: number
+          description: Цена
+          format: float
+        availableCount:
+          type: integer
+          description: Количество в наличии
+    PatientWithDisease:
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        diseaseCode:
+          type: string
+          description: Код болезни
+        diseaseName:
+          type: string
+          description: Название болезни
+        dispensaryAccounting:
+          type: boolean
+          description: "Стоит ли на диспансерном учете"
+    DiseaseWithoutId:
+      type: object
+      properties:
+        diseaseName:
+          type: string
+          description: Название болезни
+        diseaseCode:
+          type: string
+          description: Код болезни
+        commonDiseaseDuration:
+          type: string
+          description: Обычная продолжительность болезни
+    DiseaseFullInfo:
+      type: object
+      properties:
+        diseaseId:
+          type: integer
+          description: Id болезни
+        diseaseName:
+          type: string
+          description: Название болезни
+        diseaseCode:
+          type: string
+          description: Код болезни
+        commonDiseaseDuration:
+          type: string
+          description: Обычная продолжительность болезни
+    RecipeFullInfo:
+      type: object
+      properties:
+        recipeId:
+          type: integer
+          description: Id рецепта
+        admissionDateTime:
+          type: string
+          description: Время и дата приёма
+          format: date
+        expirationDate:
+          type: string
+          description: Дата срока годности рецепта
+          format: date
+        medicationName:
+          type: string
+          description: Название медикамента
+        dosage:
+          type: string
+          description: Дозировка медикамента
+        patientLastName:
+          type: string
+          description: Фамилия пациента
+        patientFirstName:
+          type: string
+          description: Имя пациента
+        patientMiddleName:
+          type: string
+          description: Отчество пациента
+        doctorLastName:
+          type: string
+          description: Фамилия доктора
+        doctorFirstName:
+          type: string
+          description: Имя доктора
+        doctorMiddleName:
+          type: string
+          description: Отчество доктора
+    Specialization:
+      type: object
+      properties:
+        specializationId:
+          type: integer
+          description: Id специализации
+        specializationName:
+          type: string
+          description: Название специализации
+    DoctorSpecialization:
+      type: object
+      properties:
+        specializationId:
+          type: integer
+          description: Id специализации
+        specializationName:
+          type: string
+          description: Название специализации
+        yearsOfExperience:
+          type: integer
+          description: Количество лет опыта
+    DoctorShortInfo:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+          description: Id врача
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        specializationName:
+          type: string
+          description: Специализация
+        yearsOfExperience:
+          type: integer
+          description: Количество лет опыта
+        isDeleted:
+          type: boolean
+          description: Удалён ли врач
+    DoctorFullInfo:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+          description: Id врача
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        education:
+          type: string
+          description: Образование
+        phoneNumber:
+          type: string
+          description: Номер телефона
+        emailAddress:
+          type: string
+          description: Email врача
+        isDeleted:
+          type: boolean
+          description: Удалён ли врач
+    PatientWithoutId:
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        phoneNumber:
+          type: string
+          description: Номер телефона
+        insuranceInformation:
+          type: string
+          description: Информация по страховке
+        isDeleted:
+          type: boolean
+          description: Откреплён ли пациент
+    PatientFullInfo:
+      type: object
+      properties:
+        patientId:
+          type: integer
+          description: Id пациента
+          format: int32
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        phoneNumber:
+          type: string
+          description: Номер телефона
+        insuranceInformation:
+          type: string
+          description: Информация по страховке
+        isDeleted:
+          type: boolean
+          description: Откреплён ли пациент
+    PatientShortInfo:
+      type: object
+      properties:
+        patientId:
+          type: integer
+          description: Id пациента
+          format: int32
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        isDeleted:
+          type: boolean
+          description: Откреплён ли пациент
+    RegisterUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    UserInfoForAdminPanel:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: Id пользователя
+          format: int32
+        email:
+          type: string
+          description: Email
+        role:
+          type: string
+          description: Роль пользователя
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id пользователя
+          format: int32
+    JWTToken:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+          description: JWT токен пользователя
+    ApiErrorResponse:
+      type: object
+      properties:
+        description:
+          type: string
+        code:
+          type: string
+        exceptionName:
+          type: string
+        exceptionMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string
