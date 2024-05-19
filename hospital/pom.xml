@@ -257,7 +257,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>
-                                ${project.basedir}/src/main/resources/openapi/hospital-openapi-2.2.0.yaml
+                                ${project.basedir}/src/main/resources/openapi/hospital-openapi-2.3.0.yaml
                             </inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>com.andrewsalygin.hospital.api</apiPackage>

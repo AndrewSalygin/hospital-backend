@@ -1,13 +1,21 @@
 package com.andrewsalygin.controller.patients;
 
-import com.andrewsalygin.hospital.api.AdminApi;
-import com.andrewsalygin.hospital.api.PatientsApi;
-import com.andrewsalygin.hospital.model.CreateMeetingJournalNote;
+import com.andrewsalygin.hospital.api.AdminPatientsApi;
+import com.andrewsalygin.hospital.model.CreatePatientJournalNote;
 import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.PatientWithoutId;
+import com.andrewsalygin.service.PatientsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
 
-public class AdminPatientsController implements AdminApi, PatientsApi {
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+public class AdminPatientsController implements AdminPatientsApi {
+
+    private final PatientsService patientsService;
 
     @Override
     public ResponseEntity<IdResponse> registerPatient(PatientWithoutId patientWithoutId) {
@@ -30,20 +38,20 @@ public class AdminPatientsController implements AdminApi, PatientsApi {
     }
 
     @Override
-    public ResponseEntity<IdResponse> addPatientNote(CreateMeetingJournalNote createMeetingJournalNote) {
-        return PatientsApi.super.addPatientNote(createMeetingJournalNote);
+    public ResponseEntity<IdResponse> addPatientNote(CreatePatientJournalNote createPatientJournalNote) {
+        return patientsService.addPatientNote(createPatientJournalNote);
     }
 
     @Override
     public ResponseEntity<Void> deletePatientNote(Integer medicalHistoryNoteId) {
-        return PatientsApi.super.deletePatientNote(medicalHistoryNoteId);
+        return patientsService.deletePatientNote(medicalHistoryNoteId);
     }
 
     @Override
     public ResponseEntity<Void> changePatientNote(
         Integer medicalHistoryNoteId,
-        CreateMeetingJournalNote createMeetingJournalNote
+        CreatePatientJournalNote createPatientJournalNote
     ) {
-        return PatientsApi.super.changePatientNote(medicalHistoryNoteId, createMeetingJournalNote);
+        return patientsService.changePatientNote(medicalHistoryNoteId, createPatientJournalNote);
     }
 }

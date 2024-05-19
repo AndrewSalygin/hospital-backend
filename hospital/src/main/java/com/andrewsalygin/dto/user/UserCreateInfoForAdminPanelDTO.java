@@ -1,6 +1,6 @@
 package com.andrewsalygin.dto.user;
 
-public record UserCreateInfo(
+public record UserCreateInfoForAdminPanelDTO(
     String email,
     String password
 ) {

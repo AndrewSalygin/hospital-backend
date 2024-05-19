@@ -1,6 +1,6 @@
 package com.andrewsalygin.service.jdbc;
 
-import com.andrewsalygin.dto.authorization.AuthUserInfo;
+import com.andrewsalygin.dto.authorization.AuthorizeUserRequestDTO;
 import com.andrewsalygin.dto.security.User;
 import com.andrewsalygin.exception.UserBadCredentialException;
 import com.andrewsalygin.hospital.model.JWTToken;
@@ -53,16 +53,16 @@ public class JdbcAuthService implements AuthService {
         String password
     ) {
         String encodedPassword = passwordEncoder.encode(password);
-        AuthUserInfo authUserInfo = new AuthUserInfo(email, encodedPassword);
+        AuthorizeUserRequestDTO authorizeUserRequestDTO = new AuthorizeUserRequestDTO(email, encodedPassword);
 
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
-        Set<ConstraintViolation<AuthUserInfo>> violations = validator.validate(authUserInfo);
+        Set<ConstraintViolation<AuthorizeUserRequestDTO>> violations = validator.validate(authorizeUserRequestDTO);
 
         JWTToken jwtToken;
         if (violations.isEmpty()) {
-            Integer userId = authRepository.performRegistration(authUserInfo);
+            Integer userId = authRepository.performRegistration(authorizeUserRequestDTO);
             User user = authRepository.getUserById(userId);
             String token = jwtUtil.generateToken(userId, email, user.role());
             jwtToken = new JWTToken();

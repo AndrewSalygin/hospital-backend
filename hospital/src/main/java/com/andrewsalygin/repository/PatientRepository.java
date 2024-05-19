@@ -1,7 +1,7 @@
 package com.andrewsalygin.repository;
 
-import com.andrewsalygin.dto.patient.Patient;
-import com.andrewsalygin.dto.patient.PatientShort;
+import com.andrewsalygin.dto.patient.PatientFullInfoDTO;
+import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
 import com.andrewsalygin.dto.patient.PatientWithoutIdDTO;
 import java.util.List;
 
@@ -13,9 +13,9 @@ public interface PatientRepository {
 
     void editPatient(Integer id, PatientWithoutIdDTO patientWithoutId);
 
-    Patient getPatient(Integer id);
+    PatientFullInfoDTO getPatient(Integer id);
 
-    List<PatientShort> getPatients(Integer limit, Integer offset);
+    List<PatientShortInfoDTO> getPatients(Integer limit, Integer offset);
 
     Integer registerPatient(PatientWithoutIdDTO patientWithoutId);
 

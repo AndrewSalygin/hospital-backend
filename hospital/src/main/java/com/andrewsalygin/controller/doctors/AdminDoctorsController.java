@@ -1,22 +1,29 @@
 package com.andrewsalygin.controller.doctors;
 
-import com.andrewsalygin.hospital.api.AdminApi;
-import com.andrewsalygin.hospital.api.DoctorsApi;
-import com.andrewsalygin.hospital.api.SurgeriesApi;
+import com.andrewsalygin.hospital.api.AdminDoctorsApi;
 import com.andrewsalygin.hospital.model.DoctorInfo;
 import com.andrewsalygin.hospital.model.SurgeryShortInfo;
-import org.springframework.http.ResponseEntity;
+import com.andrewsalygin.service.DoctorsService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
 
-public class AdminDoctorsController implements DoctorsApi {
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+public class AdminDoctorsController implements AdminDoctorsApi {
+
+    private final DoctorsService doctorsService;
 
     @Override
     public ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(Integer doctorId) {
-        return DoctorsApi.super.getSurgeriesForDoctor(doctorId);
+        return doctorsService.getSurgeriesForDoctor(doctorId);
     }
 
     @Override
     public ResponseEntity<DoctorInfo> getFirstAvailableDoctorBySpecializationAndExperience(String specializationName) {
-        return DoctorsApi.super.getFirstAvailableDoctorBySpecializationAndExperience(specializationName);
+        return doctorsService.getFirstAvailableDoctorBySpecializationAndExperience(specializationName);
     }
 }

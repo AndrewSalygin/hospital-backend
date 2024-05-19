@@ -1,7 +1,7 @@
 package com.andrewsalygin.repository.jdbc;
 
-import com.andrewsalygin.dto.patient.Patient;
-import com.andrewsalygin.dto.patient.PatientShort;
+import com.andrewsalygin.dto.patient.PatientFullInfoDTO;
+import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
 import com.andrewsalygin.dto.patient.PatientWithoutIdDTO;
 import com.andrewsalygin.exception.PatientNotFoundException;
 import com.andrewsalygin.repository.PatientRepository;
@@ -53,15 +53,15 @@ public class JdbcPatientRepository implements PatientRepository {
     }
 
     @Override
-    public Patient getPatient(Integer id) {
+    public PatientFullInfoDTO getPatient(Integer id) {
         return client.sql("SELECT * FROM patient WHERE patientId = :patientId")
             .param("patientId", id)
-            .query(Patient.class)
+            .query(PatientFullInfoDTO.class)
             .optional().orElseThrow(PatientNotFoundException::new);
     }
 
     @Override
-    public List<PatientShort> getPatients(Integer limit, Integer offset) {
+    public List<PatientShortInfoDTO> getPatients(Integer limit, Integer offset) {
         String query = "";
         if (limit == -1) {
             query = "SELECT patientId, lastName, firstName, middleName, gender, dateOfBirth, isDeleted " +
@@ -78,7 +78,7 @@ public class JdbcPatientRepository implements PatientRepository {
         return client.sql(query)
             .param("limit", limit)
             .param("offset", offset)
-            .query(PatientShort.class)
+            .query(PatientShortInfoDTO.class)
             .list();
     }
 

@@ -1,4 +1,21 @@
 package com.andrewsalygin.controller.journal;
 
-public class AdminJournalController {
+import com.andrewsalygin.hospital.api.AdminJournalPatientApi;
+import com.andrewsalygin.service.JournalService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@CrossOrigin("http://localhost:3000")
+public class AdminJournalController implements AdminJournalPatientApi {
+
+    private final JournalService journalService;
+
+    @Override
+    public ResponseEntity<Void> deleteNote(Integer medicalHistoryNoteId) {
+        return journalService.deleteNote(medicalHistoryNoteId);
+    }
 }
