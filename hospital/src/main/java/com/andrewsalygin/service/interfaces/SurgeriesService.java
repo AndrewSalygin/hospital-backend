@@ -1,4 +1,4 @@
-package com.andrewsalygin.service;
+package com.andrewsalygin.service.interfaces;
 
 import com.andrewsalygin.hospital.model.DoctorSurgeryCount;
 import com.andrewsalygin.hospital.model.DoctorWithWorkingHours;

@@ -3,14 +3,16 @@ package com.andrewsalygin.service.jdbc;
 import com.andrewsalygin.hospital.model.DiseaseFullInfo;
 import com.andrewsalygin.hospital.model.DiseaseWithoutId;
 import com.andrewsalygin.hospital.model.PatientShortInfo;
-import com.andrewsalygin.repository.DiseasesRepository;
-import com.andrewsalygin.service.DiseasesService;
+import com.andrewsalygin.repository.interfaces.DiseasesRepository;
+import com.andrewsalygin.service.interfaces.DiseasesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcDiseasesService implements DiseasesService {
 

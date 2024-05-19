@@ -1,7 +1,7 @@
 package com.andrewsalygin.controller.journal;
 
 import com.andrewsalygin.hospital.api.AdminJournalPatientApi;
-import com.andrewsalygin.service.JournalService;
+import com.andrewsalygin.service.interfaces.JournalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

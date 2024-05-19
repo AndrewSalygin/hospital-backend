@@ -1,11 +1,10 @@
 package com.andrewsalygin.controller;
 
-import com.andrewsalygin.exception.UserBadCredentialException;
 import com.andrewsalygin.hospital.api.AuthApi;
 import com.andrewsalygin.hospital.model.AuthorizeUserRequest;
 import com.andrewsalygin.hospital.model.JWTToken;
 import com.andrewsalygin.hospital.model.RegisterUserRequest;
-import com.andrewsalygin.service.AuthService;
+import com.andrewsalygin.service.interfaces.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

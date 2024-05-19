@@ -1,7 +1,5 @@
-package com.andrewsalygin.service;
+package com.andrewsalygin.service.interfaces;
 
-import com.andrewsalygin.hospital.model.IdResponse;
-import com.andrewsalygin.hospital.model.Specialization;
 import com.andrewsalygin.hospital.model.UserInfoForAdminPanel;
 import org.springframework.http.ResponseEntity;
 import java.util.List;

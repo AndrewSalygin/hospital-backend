@@ -1,4 +1,4 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.admin.UserInfo;
 import java.util.List;

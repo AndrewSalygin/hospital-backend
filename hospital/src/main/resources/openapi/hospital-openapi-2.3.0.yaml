@@ -144,7 +144,7 @@ paths:
         - name: patientId
           required: true
           in: path
-          description: "Id рецепта"
+          description: "Id пациента"
           style: simple
           explode: false
           schema:

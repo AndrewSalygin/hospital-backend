@@ -2,7 +2,7 @@ package com.andrewsalygin.controller.medications;
 
 import com.andrewsalygin.hospital.api.MedicationsApi;
 import com.andrewsalygin.hospital.model.MedicationFullInfo;
-import com.andrewsalygin.service.MedicationsService;
+import com.andrewsalygin.service.interfaces.MedicationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

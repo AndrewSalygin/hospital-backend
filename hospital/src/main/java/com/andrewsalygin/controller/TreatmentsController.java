@@ -5,7 +5,7 @@ import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfoWithTreatmentDays;
 import com.andrewsalygin.hospital.model.MedicationsFullInfoWithTreatmentDays;
 import com.andrewsalygin.hospital.model.TreatmentPrice;
-import com.andrewsalygin.service.TreatmentService;
+import com.andrewsalygin.service.interfaces.TreatmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

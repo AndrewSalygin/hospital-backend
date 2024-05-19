@@ -1,7 +1,6 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.security.UserCredentials;
-import java.util.List;
 
 public interface UsersRepository {
 

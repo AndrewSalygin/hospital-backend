@@ -8,7 +8,7 @@ import com.andrewsalygin.hospital.model.PatientJournalNote;
 import com.andrewsalygin.hospital.model.PatientShortInfo;
 import com.andrewsalygin.hospital.model.PatientWithDisease;
 import com.andrewsalygin.hospital.model.RecipeFullInfo;
-import com.andrewsalygin.service.PatientsService;
+import com.andrewsalygin.service.interfaces.PatientsService;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

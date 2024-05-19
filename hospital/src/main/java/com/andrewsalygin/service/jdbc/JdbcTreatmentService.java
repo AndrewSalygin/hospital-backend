@@ -4,14 +4,16 @@ import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfoWithTreatmentDays;
 import com.andrewsalygin.hospital.model.MedicationsFullInfoWithTreatmentDays;
 import com.andrewsalygin.hospital.model.TreatmentPrice;
-import com.andrewsalygin.repository.TreatmentRepository;
-import com.andrewsalygin.service.TreatmentService;
+import com.andrewsalygin.repository.interfaces.TreatmentRepository;
+import com.andrewsalygin.service.interfaces.TreatmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcTreatmentService implements TreatmentService {
 

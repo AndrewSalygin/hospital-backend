@@ -2,7 +2,7 @@ package com.andrewsalygin.controller;
 
 import com.andrewsalygin.hospital.api.SuperAdminUsersApi;
 import com.andrewsalygin.hospital.model.UserInfoForAdminPanel;
-import com.andrewsalygin.service.UsersService;
+import com.andrewsalygin.service.interfaces.UsersService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

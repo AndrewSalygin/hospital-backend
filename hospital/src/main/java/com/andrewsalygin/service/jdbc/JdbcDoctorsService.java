@@ -5,14 +5,16 @@ import com.andrewsalygin.hospital.model.DoctorInfo;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.DoctorSpecialization;
 import com.andrewsalygin.hospital.model.SurgeryShortInfo;
-import com.andrewsalygin.repository.DoctorsRepository;
-import com.andrewsalygin.service.DoctorsService;
+import com.andrewsalygin.repository.interfaces.DoctorsRepository;
+import com.andrewsalygin.service.interfaces.DoctorsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcDoctorsService implements DoctorsService {
 

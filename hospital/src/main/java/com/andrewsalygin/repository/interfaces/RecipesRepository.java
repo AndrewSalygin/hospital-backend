@@ -1,4 +1,4 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
 import java.util.List;

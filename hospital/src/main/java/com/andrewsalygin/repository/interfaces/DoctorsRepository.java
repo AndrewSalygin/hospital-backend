@@ -1,4 +1,4 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.doctor.DoctorFullInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorInfoDTO;
@@ -6,7 +6,6 @@ import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorSpecializationDTO;
 import com.andrewsalygin.dto.surgeries.SurgeryShortInfoDTO;
 import java.util.List;
-import org.springframework.http.ResponseEntity;
 
 public interface DoctorsRepository {
 

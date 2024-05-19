@@ -4,11 +4,7 @@ import com.andrewsalygin.dto.medicalProcedure.MedicalProcedureFullInfoWithTreatm
 import com.andrewsalygin.dto.medication.MedicationsFullInfoWithTreatmentDaysDTO;
 import com.andrewsalygin.dto.treatment.TreatmentPriceDTO;
 import com.andrewsalygin.hospital.model.IdResponse;
-import com.andrewsalygin.hospital.model.MedicalProcedureFullInfoWithTreatmentDays;
-import com.andrewsalygin.hospital.model.MedicationsFullInfoWithTreatmentDays;
-import com.andrewsalygin.hospital.model.TreatmentPrice;
-import com.andrewsalygin.repository.TreatmentRepository;
-import com.andrewsalygin.service.TreatmentService;
+import com.andrewsalygin.repository.interfaces.TreatmentRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

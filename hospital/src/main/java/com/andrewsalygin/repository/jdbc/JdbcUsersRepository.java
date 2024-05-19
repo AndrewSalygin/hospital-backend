@@ -2,7 +2,7 @@ package com.andrewsalygin.repository.jdbc;
 
 import com.andrewsalygin.dto.security.UserCredentials;
 import com.andrewsalygin.exception.UserNotFoundException;
-import com.andrewsalygin.repository.UsersRepository;
+import com.andrewsalygin.repository.interfaces.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;

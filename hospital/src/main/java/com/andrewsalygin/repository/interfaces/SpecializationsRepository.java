@@ -1,4 +1,4 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
 import com.andrewsalygin.hospital.model.IdResponse;

@@ -1,10 +1,9 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
 import com.andrewsalygin.dto.disease.DiseaseWithoutIdDTO;
 import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
 import java.util.List;
-import org.springframework.http.ResponseEntity;
 
 public interface DiseasesRepository {
 

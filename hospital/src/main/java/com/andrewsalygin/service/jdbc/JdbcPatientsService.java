@@ -1,8 +1,12 @@
 package com.andrewsalygin.service.jdbc;
 
+import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
 import com.andrewsalygin.dto.patient.PatientFullInfoDTO;
 import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
+import com.andrewsalygin.dto.patient.PatientWithDiseaseDTO;
 import com.andrewsalygin.dto.patient.PatientWithoutIdDTO;
+import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
+import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
 import com.andrewsalygin.hospital.model.CreatePatientJournalNote;
 import com.andrewsalygin.hospital.model.DiseaseFullInfo;
 import com.andrewsalygin.hospital.model.IdResponse;
@@ -12,8 +16,8 @@ import com.andrewsalygin.hospital.model.PatientShortInfo;
 import com.andrewsalygin.hospital.model.PatientWithDisease;
 import com.andrewsalygin.hospital.model.PatientWithoutId;
 import com.andrewsalygin.hospital.model.RecipeFullInfo;
-import com.andrewsalygin.repository.PatientRepository;
-import com.andrewsalygin.service.PatientsService;
+import com.andrewsalygin.repository.interfaces.PatientRepository;
+import com.andrewsalygin.service.interfaces.PatientsService;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcPatientsService implements PatientsService {
 
@@ -34,7 +39,6 @@ public class JdbcPatientsService implements PatientsService {
     private final ModelMapper modelMapper;
 
     @Override
-    @Transactional
     public ResponseEntity<Void> attachPatient(Integer id) {
         patientRepository.attachPatient(id);
 
@@ -42,7 +46,6 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<Void> detachPatient(Integer id) {
         patientRepository.detachPatient(id);
 
@@ -50,7 +53,6 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<Void> editPatient(Integer id, PatientWithoutId patientWithoutId) {
         PatientWithoutIdDTO patient = modelMapper.map(patientWithoutId, PatientWithoutIdDTO.class);
         patientRepository.editPatient(id, patient);
@@ -59,7 +61,6 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<PatientFullInfo> getPatient(Integer id) {
         PatientFullInfoDTO patient = patientRepository.getPatient(id);
 
@@ -68,7 +69,6 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<List<PatientShortInfo>> getPatients(Integer limit, Integer offset) {
         List<PatientShortInfoDTO> patients = patientRepository.getPatients(limit, offset);
 
@@ -80,7 +80,6 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<IdResponse> registerPatient(PatientWithoutId patientWithoutId) {
         PatientWithoutIdDTO patient = modelMapper.map(patientWithoutId, PatientWithoutIdDTO.class);
 
@@ -98,13 +97,22 @@ public class JdbcPatientsService implements PatientsService {
     }
 
     @Override
-    public ResponseEntity<IdResponse> addPatientNote(CreatePatientJournalNote createMeetingJournalNote) {
-        return null;
+    public ResponseEntity<IdResponse> addPatientNote(CreatePatientJournalNote createPatientJournalNote) {
+        if (createPatientJournalNote.getInitialAdmission() && createPatientJournalNote.getDischarge()) {
+            throw new RuntimeException("Пациент должен или выписываться, или иметь первоначальный приём");
+        }
+        Integer resultFromRepository = patientRepository.addPatientNote(createPatientJournalNote);
+
+        IdResponse idResponse = new IdResponse();
+        idResponse.setId(resultFromRepository);
+
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deletePatientNote(Integer medicalHistoryNoteId) {
-        return null;
+        patientRepository.deletePatientNote(medicalHistoryNoteId);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Override
@@ -112,12 +120,19 @@ public class JdbcPatientsService implements PatientsService {
         Integer medicalHistoryNoteId,
         CreatePatientJournalNote createPatientJournalNote
     ) {
-        return null;
+        patientRepository.changePatientNote(medicalHistoryNoteId, createPatientJournalNote);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<RecipeFullInfo>> getRecipesPatient(Integer patientId) {
-        return null;
+        List<RecipeFullInfoDTO> resultFromRepository = patientRepository.getRecipesPatient(patientId);
+
+        Type listType = new TypeToken<List<RecipeFullInfo>>() {
+        }.getType();
+        List<RecipeFullInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
@@ -127,7 +142,14 @@ public class JdbcPatientsService implements PatientsService {
         LocalDate expirationDate,
         Integer medicalHistoryNoteId
     ) {
-        return null;
+        IdResponse idResponse = new IdResponse();
+        idResponse.setId(patientRepository.addRecipeToPatient(
+            patientId,
+            medicationId,
+            expirationDate,
+            medicalHistoryNoteId
+        ));
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
     }
 
     @Override
@@ -136,22 +158,37 @@ public class JdbcPatientsService implements PatientsService {
         Integer diseaseId,
         Boolean dispensaryAccounting
     ) {
-        return null;
+        patientRepository.addDiseaseToPatient(patientId, diseaseId, dispensaryAccounting);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteDiseaseFromPatient(Integer patientId, Integer diseaseId) {
-        return null;
+        patientRepository.deleteDiseaseFromPatient(patientId, diseaseId);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<DiseaseFullInfo>> getDiseasesPatient(Integer patientId) {
-        return null;
+        List<DiseaseFullInfoDTO> resultFromRepository = patientRepository.getDiseasesPatient(patientId);
+
+        Type listType = new TypeToken<List<DiseaseFullInfo>>() {
+        }.getType();
+        List<DiseaseFullInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<PatientWithDisease>> getPatientsDiseases(Integer limit, Integer offset) {
-        return null;
+        List<PatientWithDiseaseDTO> resultFromRepository = patientRepository.getPatientsDiseases(limit, offset);
+
+        Type listType = new TypeToken<List<PatientWithDisease>>() {
+        }.getType();
+        List<PatientWithDisease> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+
     }
 
     @Override
@@ -160,6 +197,12 @@ public class JdbcPatientsService implements PatientsService {
         Integer limit,
         Integer offset
     ) {
-        return null;
+        List<PatientJournalNoteDTO> resultFromRepository = patientRepository.getPatientMeetings(patientId, limit, offset);
+
+        Type listType = new TypeToken<List<PatientJournalNote>>() {
+        }.getType();
+        List<PatientJournalNote> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

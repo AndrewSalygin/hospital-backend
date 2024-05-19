@@ -4,14 +4,16 @@ import com.andrewsalygin.hospital.model.DiseaseFullInfo;
 import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfo;
 import com.andrewsalygin.hospital.model.MedicalProcedureWithoutId;
-import com.andrewsalygin.repository.MedicalProceduresRepository;
-import com.andrewsalygin.service.MedicalProceduresService;
+import com.andrewsalygin.repository.interfaces.MedicalProceduresRepository;
+import com.andrewsalygin.service.interfaces.MedicalProceduresService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcMedicalProceduresService implements MedicalProceduresService {
 

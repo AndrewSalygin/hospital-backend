@@ -1,7 +1,7 @@
 package com.andrewsalygin.controller.patients;
 
 import com.andrewsalygin.hospital.api.SuperAdminPatientsApi;
-import com.andrewsalygin.service.PatientsService;
+import com.andrewsalygin.service.interfaces.PatientsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

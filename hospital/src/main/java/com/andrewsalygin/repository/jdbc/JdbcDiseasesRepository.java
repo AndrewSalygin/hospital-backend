@@ -3,14 +3,9 @@ package com.andrewsalygin.repository.jdbc;
 import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
 import com.andrewsalygin.dto.disease.DiseaseWithoutIdDTO;
 import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
-import com.andrewsalygin.hospital.model.DiseaseFullInfo;
-import com.andrewsalygin.hospital.model.DiseaseWithoutId;
-import com.andrewsalygin.hospital.model.PatientShortInfo;
-import com.andrewsalygin.repository.DiseasesRepository;
-import com.andrewsalygin.service.DiseasesService;
+import com.andrewsalygin.repository.interfaces.DiseasesRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 

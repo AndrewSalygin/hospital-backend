@@ -1,4 +1,4 @@
-package com.andrewsalygin.repository;
+package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDTO;

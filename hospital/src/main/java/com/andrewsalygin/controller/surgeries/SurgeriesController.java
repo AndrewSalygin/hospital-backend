@@ -3,7 +3,7 @@ package com.andrewsalygin.controller.surgeries;
 import com.andrewsalygin.hospital.api.SurgeriesApi;
 import com.andrewsalygin.hospital.model.MedicationWithAmount;
 import com.andrewsalygin.hospital.model.SurgeryFullInfo;
-import com.andrewsalygin.service.SurgeriesService;
+import com.andrewsalygin.service.interfaces.SurgeriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

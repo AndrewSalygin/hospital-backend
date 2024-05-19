@@ -2,9 +2,7 @@ package com.andrewsalygin.repository.jdbc;
 
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDTO;
-import com.andrewsalygin.hospital.model.PatientJournalNote;
-import com.andrewsalygin.hospital.model.PatientJournalNoteFullInfo;
-import com.andrewsalygin.repository.JournalRepository;
+import com.andrewsalygin.repository.interfaces.JournalRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;

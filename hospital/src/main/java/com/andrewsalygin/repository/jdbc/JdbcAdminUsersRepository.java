@@ -1,7 +1,7 @@
 package com.andrewsalygin.repository.jdbc;
 
 import com.andrewsalygin.dto.admin.UserInfo;
-import com.andrewsalygin.repository.AdminUsersRepository;
+import com.andrewsalygin.repository.interfaces.AdminUsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import java.util.List;

@@ -1,12 +1,9 @@
 package com.andrewsalygin.repository.jdbc;
 
 import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
-import com.andrewsalygin.hospital.model.RecipeFullInfo;
-import com.andrewsalygin.repository.RecipesRepository;
-import com.andrewsalygin.service.RecipesService;
+import com.andrewsalygin.repository.interfaces.RecipesRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 

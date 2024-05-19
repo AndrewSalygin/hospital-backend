@@ -3,7 +3,7 @@ package com.andrewsalygin.controller.doctorsMedicalProcedures;
 import com.andrewsalygin.hospital.api.DoctorsMedicalProceduresApi;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfo;
-import com.andrewsalygin.service.DoctorsMedicalProceduresService;
+import com.andrewsalygin.service.interfaces.DoctorsMedicalProceduresService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

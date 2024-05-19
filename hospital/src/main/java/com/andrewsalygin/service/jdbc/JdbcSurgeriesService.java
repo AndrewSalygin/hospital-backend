@@ -7,15 +7,17 @@ import com.andrewsalygin.hospital.model.MedicationWithAmount;
 import com.andrewsalygin.hospital.model.SurgeryFullInfo;
 import com.andrewsalygin.hospital.model.SurgeryFullInfoWithoutId;
 import com.andrewsalygin.hospital.model.TotalCost;
-import com.andrewsalygin.repository.SurgeriesRepository;
-import com.andrewsalygin.service.SurgeriesService;
+import com.andrewsalygin.repository.interfaces.SurgeriesRepository;
+import com.andrewsalygin.service.interfaces.SurgeriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcSurgeriesService implements SurgeriesService {
 

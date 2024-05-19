@@ -4,14 +4,9 @@ import com.andrewsalygin.dto.medication.MedicationFullInfoDTO;
 import com.andrewsalygin.dto.medication.MedicationWithoutIdDTO;
 import com.andrewsalygin.dto.medication.NewInfoMedicationDTO;
 import com.andrewsalygin.hospital.model.IdResponse;
-import com.andrewsalygin.hospital.model.MedicationFullInfo;
-import com.andrewsalygin.hospital.model.MedicationWithoutId;
-import com.andrewsalygin.hospital.model.NewInfoMedication;
-import com.andrewsalygin.repository.MedicationsRepository;
-import com.andrewsalygin.service.MedicationsService;
+import com.andrewsalygin.repository.interfaces.MedicationsRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 

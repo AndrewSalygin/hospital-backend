@@ -1,7 +1,7 @@
 package com.andrewsalygin.controller.recipes;
 
 import com.andrewsalygin.hospital.api.SuperAdminRecipesApi;
-import com.andrewsalygin.service.RecipesService;
+import com.andrewsalygin.service.interfaces.RecipesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

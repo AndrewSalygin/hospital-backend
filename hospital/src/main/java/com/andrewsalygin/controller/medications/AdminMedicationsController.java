@@ -4,7 +4,7 @@ import com.andrewsalygin.hospital.api.AdminMedicationsApi;
 import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.MedicationWithoutId;
 import com.andrewsalygin.hospital.model.NewInfoMedication;
-import com.andrewsalygin.service.MedicationsService;
+import com.andrewsalygin.service.interfaces.MedicationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

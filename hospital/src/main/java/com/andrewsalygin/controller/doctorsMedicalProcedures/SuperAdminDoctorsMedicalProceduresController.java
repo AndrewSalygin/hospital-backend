@@ -1,7 +1,7 @@
 package com.andrewsalygin.controller.doctorsMedicalProcedures;
 
 import com.andrewsalygin.hospital.api.SuperAdminDoctorsMedicalProceduresApi;
-import com.andrewsalygin.service.DoctorsMedicalProceduresService;
+import com.andrewsalygin.service.interfaces.DoctorsMedicalProceduresService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

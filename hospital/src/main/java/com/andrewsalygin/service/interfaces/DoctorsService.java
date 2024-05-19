@@ -1,4 +1,4 @@
-package com.andrewsalygin.service;
+package com.andrewsalygin.service.interfaces;
 
 import com.andrewsalygin.hospital.model.DoctorFullInfo;
 import com.andrewsalygin.hospital.model.DoctorInfo;

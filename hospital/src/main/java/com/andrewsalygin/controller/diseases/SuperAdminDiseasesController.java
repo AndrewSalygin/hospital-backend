@@ -3,7 +3,7 @@ package com.andrewsalygin.controller.diseases;
 import com.andrewsalygin.hospital.api.SuperAdminDiseasesApi;
 import com.andrewsalygin.hospital.model.DiseaseFullInfo;
 import com.andrewsalygin.hospital.model.DiseaseWithoutId;
-import com.andrewsalygin.service.DiseasesService;
+import com.andrewsalygin.service.interfaces.DiseasesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

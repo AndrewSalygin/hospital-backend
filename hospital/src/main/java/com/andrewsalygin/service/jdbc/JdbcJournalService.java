@@ -2,14 +2,16 @@ package com.andrewsalygin.service.jdbc;
 
 import com.andrewsalygin.hospital.model.PatientJournalNote;
 import com.andrewsalygin.hospital.model.PatientJournalNoteFullInfo;
-import com.andrewsalygin.repository.JournalRepository;
-import com.andrewsalygin.service.JournalService;
+import com.andrewsalygin.repository.interfaces.JournalRepository;
+import com.andrewsalygin.service.interfaces.JournalService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcJournalService implements JournalService {
 
@@ -21,6 +23,7 @@ public class JdbcJournalService implements JournalService {
     }
 
     @Override
+
     public ResponseEntity<List<PatientJournalNote>> getNotes(Integer limit, Integer offset) {
         return null;
     }

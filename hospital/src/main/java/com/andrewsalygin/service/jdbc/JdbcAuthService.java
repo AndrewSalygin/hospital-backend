@@ -4,8 +4,8 @@ import com.andrewsalygin.dto.authorization.AuthorizeUserRequestDTO;
 import com.andrewsalygin.dto.security.User;
 import com.andrewsalygin.exception.UserBadCredentialException;
 import com.andrewsalygin.hospital.model.JWTToken;
-import com.andrewsalygin.repository.AuthRepository;
-import com.andrewsalygin.service.AuthService;
+import com.andrewsalygin.repository.interfaces.AuthRepository;
+import com.andrewsalygin.service.interfaces.AuthService;
 import com.andrewsalygin.util.JWTUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcAuthService implements AuthService {
 
@@ -30,7 +31,6 @@ public class JdbcAuthService implements AuthService {
     private final JWTUtil jwtUtil;
 
     @Override
-    @Transactional
     public ResponseEntity<JWTToken> performLogin(String email, String password) {
         String encodedPasswordFromDB = authRepository.getEncodedPasswordByEmail(email);
 
@@ -47,7 +47,6 @@ public class JdbcAuthService implements AuthService {
     }
 
     @Override
-    @Transactional
     public ResponseEntity<JWTToken> performRegistration(
         String email,
         String password

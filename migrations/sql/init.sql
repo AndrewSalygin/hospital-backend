@@ -32,9 +32,9 @@ CREATE TABLE disease (
 CREATE TABLE surgery (
     surgeryId int IDENTITY(1,1) NOT NULL,
     patientId int NOT NULL,
-    scheduledDateTime datetime NULL,
-    startTime datetime NULL,
-    endTime datetime NULL,
+    scheduledDateTime datetimeoffset NULL,
+    startTime datetimeoffset NULL,
+    endTime datetimeoffset NULL,
     surgeryType varchar(100) NOT NULL,
     surgicalProcedureDescription text NULL,
     emergency bit NOT NULL
@@ -75,7 +75,7 @@ CREATE TABLE doctorSurgeryJournal (
 
 CREATE TABLE medicalHistoryNote (
     medicalHistoryNoteId int IDENTITY(1,1) NOT NULL,
-    admissionDateTime datetime NOT NULL,
+    admissionDateTime datetimeoffset NOT NULL,
     anamnesis text NOT NULL
 );
 
@@ -155,6 +155,114 @@ CREATE TABLE users (
     password varchar(255) NOT NULL,
     role varchar(20) NOT NULL
 );
+
+ALTER TABLE patient
+    ADD CONSTRAINT PK_patient PRIMARY KEY (patientId);
+
+ALTER TABLE doctor
+    ADD CONSTRAINT PK_doctor PRIMARY KEY (doctorId);
+
+ALTER TABLE disease
+    ADD CONSTRAINT PK_disease PRIMARY KEY (diseaseId);
+
+ALTER TABLE surgery
+    ADD CONSTRAINT PK_surgery PRIMARY KEY (surgeryId);
+
+ALTER TABLE medicalHistoryNote
+    ADD CONSTRAINT PK_medicalHistoryNote PRIMARY KEY (medicalHistoryNoteId);
+
+ALTER TABLE medication
+    ADD CONSTRAINT PK_medication PRIMARY KEY (medicationId);
+
+ALTER TABLE specialization
+    ADD CONSTRAINT PK_specialization PRIMARY KEY (specializationId);
+
+ALTER TABLE treatment
+    ADD CONSTRAINT PK_treatment PRIMARY KEY (treatmentId);
+
+ALTER TABLE medicalProcedure
+    ADD CONSTRAINT PK_medicalProcedure PRIMARY KEY (medicalProcedureId);
+
+ALTER TABLE recipe
+    ADD CONSTRAINT PK_recipe PRIMARY KEY (recipeId);
+
+ALTER TABLE patientJournal
+    ADD CONSTRAINT FK_patientJournal_patient FOREIGN KEY (patientId)
+        REFERENCES patient (patientId),
+        CONSTRAINT FK_patientJournal_medicalHistoryNote FOREIGN KEY (medicalHistoryNoteId)
+            REFERENCES medicalHistoryNote (medicalHistoryNoteId),
+        CONSTRAINT FK_patientJournal_doctor FOREIGN KEY (doctorId)
+            REFERENCES doctor (doctorId);
+
+ALTER TABLE patientDiseasesJournal
+    ADD CONSTRAINT FK_patientDiseasesJournal_patient FOREIGN KEY (patientId)
+        REFERENCES patient (patientId),
+        CONSTRAINT FK_patientDiseasesJournal_disease FOREIGN KEY (diseaseId)
+            REFERENCES disease (diseaseId);
+
+ALTER TABLE doctorSpecialization
+    ADD CONSTRAINT FK_doctorSpecialization_doctor FOREIGN KEY (doctorId)
+        REFERENCES doctor (doctorId),
+        CONSTRAINT FK_doctorSpecialization_specialization FOREIGN KEY (specializationId)
+            REFERENCES specialization (specializationId);
+
+ALTER TABLE doctorSurgeryJournal
+    ADD CONSTRAINT FK_doctorSurgeryJournal_doctor FOREIGN KEY (doctorId)
+        REFERENCES doctor (doctorId),
+        CONSTRAINT FK_doctorSurgeryJournal_surgery FOREIGN KEY (surgeryId)
+            REFERENCES surgery (surgeryId);
+
+ALTER TABLE diseaseList
+    ADD CONSTRAINT FK_diseaseList_disease FOREIGN KEY (diseaseId)
+        REFERENCES disease (diseaseId),
+        CONSTRAINT FK_diseaseList_medicalHistoryNote FOREIGN KEY (medicalHistoryNoteId)
+            REFERENCES medicalHistoryNote (medicalHistoryNoteId),
+        CONSTRAINT FK_diseaseList_treatment FOREIGN KEY (treatmentId)
+            REFERENCES treatment (treatmentId);
+
+ALTER TABLE medicationList
+    ADD CONSTRAINT FK_medicationList_medication FOREIGN KEY (medicationId)
+        REFERENCES medication (medicationId),
+        CONSTRAINT FK_medicationList_surgery FOREIGN KEY (surgeryId)
+            REFERENCES surgery (surgeryId);
+
+ALTER TABLE recipe
+    ADD CONSTRAINT FK_recipe_medication FOREIGN KEY (medicationId)
+        REFERENCES medication (medicationId);
+
+ALTER TABLE recipeJournal
+    ADD CONSTRAINT FK_recipeJournal_recipe FOREIGN KEY (recipeId)
+        REFERENCES recipe (recipeId),
+        CONSTRAINT FK_recipeJournal_patient FOREIGN KEY (patientId)
+            REFERENCES patient (patientId),
+        CONSTRAINT FK_recipeJournal_medicalHistoryNote FOREIGN KEY (medicalHistoryNoteId)
+            REFERENCES medicalHistoryNote (medicalHistoryNoteId);
+
+ALTER TABLE treatmentMedication
+    ADD CONSTRAINT FK_treatmentMedication_treatment FOREIGN KEY (treatmentId)
+        REFERENCES treatment (treatmentId),
+        CONSTRAINT FK_treatmentMedication_medication FOREIGN KEY (medicationId)
+            REFERENCES medication (medicationId);
+
+ALTER TABLE treatmentMedicalProcedure
+    ADD CONSTRAINT FK_treatmentMedicalProcedure_treatment FOREIGN KEY (treatmentId)
+        REFERENCES treatment (treatmentId),
+        CONSTRAINT FK_treatmentMedicalProcedure_medicalProcedure FOREIGN KEY (medicalProcedureId)
+            REFERENCES medicalProcedure (medicalProcedureId);
+
+ALTER TABLE doctorMedicalProcedure
+    ADD CONSTRAINT FK_doctorMedicalProcedure_doctor FOREIGN KEY (doctorId)
+        REFERENCES doctor (doctorId),
+        CONSTRAINT FK_doctorMedicalProcedure_medicalProcedure FOREIGN KEY (medicalProcedureId)
+            REFERENCES medicalProcedure (medicalProcedureId);
+
+ALTER TABLE surgery
+    ADD CONSTRAINT FK_surgery_patient FOREIGN KEY (patientId)
+        REFERENCES patient (patientId);
+
+ALTER TABLE treatment
+    ADD CONSTRAINT FK_treatment_doctor FOREIGN KEY (doctorId)
+        REFERENCES doctor (doctorId);
 
 INSERT INTO patient (lastName, firstName, middleName, gender, dateOfBirth, phoneNumber, insuranceInformation)
 VALUES
@@ -405,3 +513,221 @@ VALUES
 (11, 11, 15), -- Павлов (Александр) - Кардиолог
 (12, 12, 20), -- Ковалев - Пульмонолог
 (13, 13, 10); -- Иванова - ЛФК
+
+
+-- 1 (OK)
+CREATE VIEW dbo.doctorV
+AS
+SELECT dbo.doctor.lastName, dbo.doctor.firstName, dbo.doctor.middleName, dbo.doctor.dateOfBirth, dbo.doctor.gender, dbo.specialization.specializationName, dbo.doctorSpecialization.yearsOfExperience
+FROM dbo.doctor INNER JOIN
+     dbo.doctorSpecialization ON dbo.doctor.doctorId = dbo.doctorSpecialization.doctorId INNER JOIN
+     dbo.specialization ON dbo.doctorSpecialization.specializationId = dbo.specialization.specializationId;
+
+-- 2 (OK)
+CREATE VIEW dbo.recipeV
+AS
+SELECT  dbo.recipe.recipeId, dbo.medicalHistoryNote.admissionDateTime, dbo.recipe.expirationDate, dbo.medication.medicationName, dbo.medication.medicationForm, dbo.medication.dosage,
+     dbo.patient.lastName AS [patientLastName], dbo.patient.firstName AS [patientFirstName], dbo.patient.middleName AS [patientMiddleName], dbo.doctor.lastName AS [doctorLastName],
+     dbo.doctor.firstName AS [doctorFirstName], dbo.doctor.middleName AS [doctorMiddleName]
+FROM dbo.recipe INNER JOIN
+     dbo.medication ON dbo.recipe.medicationId = dbo.medication.medicationId INNER JOIN
+     dbo.recipeJournal ON dbo.recipe.recipeId = dbo.recipeJournal.recipeId INNER JOIN
+     dbo.doctor INNER JOIN
+     dbo.patientJournal ON dbo.doctor.doctorId = dbo.patientJournal.doctorId INNER JOIN
+     dbo.medicalHistoryNote ON dbo.patientJournal.medicalHistoryNoteId = dbo.medicalHistoryNote.medicalHistoryNoteId INNER JOIN
+     dbo.patient ON dbo.patientJournal.patientId = dbo.patient.patientId ON dbo.recipeJournal.medicalHistoryNoteId = dbo.medicalHistoryNote.medicalHistoryNoteId AND dbo.recipeJournal.patientId = dbo.patient.patientId;
+
+-- 3 (OK)
+CREATE VIEW dbo.patientDiseaseV
+AS
+SELECT  dbo.patient.lastName, dbo.patient.firstName, dbo.patient.middleName, dbo.patient.gender, dbo.patient.dateOfBirth, dbo.disease.diseaseCode, dbo.disease.diseaseName,
+        dbo.patientDiseasesJournal.dispensaryAccounting
+FROM    dbo.disease INNER JOIN
+        dbo.patientDiseasesJournal ON dbo.disease.diseaseId = dbo.patientDiseasesJournal.diseaseId INNER JOIN
+        dbo.patient ON dbo.patientDiseasesJournal.patientId = dbo.patient.patientId;
+
+-- 4 (OK)
+CREATE VIEW dbo.doctorSpecializationInsertV
+AS
+SELECT *
+FROM dbo.doctorSpecialization
+WHERE yearsOfExperience >= 0
+WITH CHECK OPTION;
+
+-- 5 (OK)
+CREATE VIEW dbo.recipeInsertV
+AS
+SELECT *
+FROM dbo.recipe
+WHERE expirationDate >= GETDATE()
+WITH CHECK OPTION;
+
+-- 6 (OK)
+CREATE VIEW dbo.patientInsertV
+AS
+SELECT *
+FROM dbo.patient
+WHERE gender IN ('М', 'Ж')
+WITH CHECK OPTION;
+
+-- 1 (OK)
+-- Процедура для обновления информации о лекарствах
+CREATE PROCEDURE dbo.updateMedicationStock
+    @medicationId int,
+    @newCount int,
+    @newPrice float,
+    @dateOfManufacture date,
+    @expireDate date
+AS
+BEGIN
+    UPDATE dbo.medication
+    SET availableCount = @newCount, price = @newPrice, dateOfManufacture = @dateOfManufacture, expireDate = @expireDate
+    WHERE medicationId = @medicationId;
+END;
+
+-- 2 (OK)
+-- Процедура для расчета затрат на лечение пациента (выходные параметры)
+CREATE PROCEDURE dbo.calculateTreatmentCosts
+    @treatmentId int,
+    @totalMedicationCost float OUTPUT,
+    @totalProcedureCost float OUTPUT,
+    @totalCost float OUTPUT
+AS
+BEGIN
+    -- Расчет стоимости лекарств
+    SELECT @totalMedicationCost = SUM(m.price * tm.amount)
+    FROM dbo.treatmentMedication tm
+    INNER JOIN dbo.medication m ON tm.medicationId = m.medicationId
+    WHERE tm.treatmentId = @treatmentId;
+
+    -- Расчет стоимости медицинских процедур
+    SELECT @totalProcedureCost = SUM(mp.price * tmp.amount)
+    FROM dbo.treatmentMedicalProcedure tmp
+    INNER JOIN dbo.medicalProcedure mp ON tmp.medicalProcedureId = mp.medicalProcedureId
+    WHERE tmp.treatmentId = @treatmentId;
+
+    -- Расчет итоговой общей стоимости
+    SET @totalCost = ISNULL(@totalMedicationCost, 0) + ISNULL(@totalProcedureCost, 0);
+END;
+
+-- 3 (OK)
+-- Подсчет количества операций по докторам за заданный период (курсор + циклические)
+CREATE PROCEDURE dbo.countSurgeriesByDoctor
+    @startDate DATETIME,
+    @endDate DATETIME
+AS
+BEGIN
+    DECLARE @doctorId INT;
+    DECLARE @lastName VARCHAR(255);
+    DECLARE @firstName VARCHAR(255);
+    DECLARE @middleName VARCHAR(255);
+    DECLARE @count INT;
+
+    DECLARE @results TABLE (
+        doctorId INT,
+        lastName VARCHAR(255),
+        firstName VARCHAR(255),
+        middleName VARCHAR(255),
+        surgeriesCount INT
+    );
+
+    DECLARE surgery_cursor CURSOR FOR 
+        SELECT doctorId, lastName, firstName, middleName
+        FROM dbo.doctor;
+
+    OPEN surgery_cursor;
+    FETCH NEXT FROM surgery_cursor INTO @doctorId, @lastName, @firstName, @middleName;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SELECT @count = COUNT(*)
+        FROM dbo.surgery
+        JOIN dbo.doctorSurgeryJournal ON dbo.surgery.surgeryId = dbo.doctorSurgeryJournal.surgeryId
+        WHERE dbo.doctorSurgeryJournal.doctorId = @doctorId
+            AND dbo.surgery.startTime BETWEEN @startDate AND @endDate
+            AND dbo.surgery.endTime BETWEEN @startDate AND @endDate;
+
+        INSERT INTO @results (doctorId, lastName, firstName, middleName, surgeriesCount)
+        VALUES (@doctorId, @lastName, @firstName, @middleName, @count);
+
+        FETCH NEXT FROM surgery_cursor INTO @doctorId, @lastName, @firstName, @middleName;
+    END;
+
+    CLOSE surgery_cursor;
+    DEALLOCATE surgery_cursor;
+
+    SELECT * FROM @results;
+END;
+
+-- 4 (OK)
+-- Получение первого освободившегося опытного доктора с операции (курсор + условные)
+CREATE PROCEDURE dbo.getFirstAvailableDoctorBySpecializationAndExperience
+    @specializationName VARCHAR(100)
+AS
+BEGIN
+    DECLARE @specializationId INT;
+    
+    SELECT @specializationId = specializationId
+    FROM dbo.specialization
+    WHERE specializationName = @specializationName;
+
+    IF @specializationId IS NULL
+    BEGIN
+        RAISERROR('Такой специальности нету в базе', 11, 1);
+        RETURN;
+    END
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.doctorSpecialization WHERE specializationId = @specializationId)
+    BEGIN
+        RAISERROR('В больнице не трудоустроено таких специалистов на данный момент', 11, 1);
+        RETURN;
+    END
+
+    DECLARE @doctorId INT, @firstName VARCHAR(40), @lastName VARCHAR(40);
+    DECLARE @currentDateTime DATETIME = GETDATE();  --'2024-03-09T14:15:00'; - Пульмонолог
+
+    DECLARE doctor_cursor CURSOR FOR 
+        SELECT d.doctorId, d.firstName, d.lastName
+        FROM dbo.doctor d
+        INNER JOIN dbo.doctorSpecialization ds ON d.doctorId = ds.doctorId
+        INNER JOIN dbo.specialization s ON s.specializationId = ds.specializationId
+        WHERE s.specializationName = @specializationName
+        AND NOT EXISTS (
+            SELECT 1
+            FROM dbo.doctorSurgeryJournal dsj
+            INNER JOIN dbo.surgery su ON dsj.surgeryId = su.surgeryId
+            WHERE dsj.doctorId = d.doctorId
+            AND ((su.startTime <= @currentDateTime AND su.endTime IS NULL)
+            OR (su.startTime <= @currentDateTime AND @currentDateTime <= su.endTime))
+        )
+        ORDER BY ds.yearsOfExperience DESC;
+
+    OPEN doctor_cursor;
+
+    FETCH NEXT FROM doctor_cursor INTO @doctorId, @firstName, @lastName;
+
+    IF @@FETCH_STATUS = 0
+    BEGIN
+        SELECT @doctorId AS doctorId, @firstName AS firstName, @lastName AS lastName;
+    END
+    ELSE
+    BEGIN
+        RAISERROR('На данный момент все врачи данной специальности заняты', 11, 1);
+    END
+
+    CLOSE doctor_cursor;
+    DEALLOCATE doctor_cursor;
+END;
+
+-- 5 (OK)
+-- Расчет общей стоимости лекарств для операции (выходные параметры)
+CREATE PROCEDURE dbo.calculateTotalMedicationCost
+    @surgeryId INT,
+    @totalCost FLOAT OUTPUT
+AS
+BEGIN
+    SELECT @totalCost = SUM(m.price * ml.amount)
+    FROM dbo.medicationList ml
+    INNER JOIN dbo.medication m ON ml.medicationId = m.medicationId
+    WHERE ml.surgeryId = @surgeryId;
+END;

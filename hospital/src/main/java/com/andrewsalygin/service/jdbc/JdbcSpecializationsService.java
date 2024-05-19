@@ -3,14 +3,16 @@ package com.andrewsalygin.service.jdbc;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.Specialization;
-import com.andrewsalygin.repository.SpecializationsRepository;
-import com.andrewsalygin.service.SpecializationsService;
+import com.andrewsalygin.repository.interfaces.SpecializationsRepository;
+import com.andrewsalygin.service.interfaces.SpecializationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class JdbcSpecializationsService implements SpecializationsService {
 

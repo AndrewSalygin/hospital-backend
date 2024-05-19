@@ -4,7 +4,7 @@ import com.andrewsalygin.hospital.api.DoctorsApi;
 import com.andrewsalygin.hospital.model.DoctorFullInfo;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.DoctorSpecialization;
-import com.andrewsalygin.service.DoctorsService;
+import com.andrewsalygin.service.interfaces.DoctorsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

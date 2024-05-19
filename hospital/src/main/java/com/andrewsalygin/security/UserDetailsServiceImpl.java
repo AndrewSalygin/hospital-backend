@@ -1,7 +1,7 @@
 package com.andrewsalygin.security;
 
 import com.andrewsalygin.dto.security.UserCredentials;
-import com.andrewsalygin.repository.UsersRepository;
+import com.andrewsalygin.repository.interfaces.UsersRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

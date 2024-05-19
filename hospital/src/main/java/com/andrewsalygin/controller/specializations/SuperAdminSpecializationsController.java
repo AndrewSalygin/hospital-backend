@@ -2,7 +2,7 @@ package com.andrewsalygin.controller.specializations;
 
 import com.andrewsalygin.hospital.api.SuperAdminSpecializationsApi;
 import com.andrewsalygin.hospital.model.IdResponse;
-import com.andrewsalygin.service.SpecializationsService;
+import com.andrewsalygin.service.interfaces.SpecializationsService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

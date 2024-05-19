@@ -2,8 +2,7 @@ package com.andrewsalygin.controller.recipes;
 
 import com.andrewsalygin.hospital.api.RecipesApi;
 import com.andrewsalygin.hospital.model.RecipeFullInfo;
-import com.andrewsalygin.service.MedicationsService;
-import com.andrewsalygin.service.RecipesService;
+import com.andrewsalygin.service.interfaces.RecipesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

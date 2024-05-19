@@ -4,7 +4,7 @@ import com.andrewsalygin.dto.authorization.AuthorizeUserRequestDTO;
 import com.andrewsalygin.dto.security.User;
 import com.andrewsalygin.exception.UserAlreadyExistException;
 import com.andrewsalygin.exception.UserNotFoundException;
-import com.andrewsalygin.repository.AuthRepository;
+import com.andrewsalygin.repository.interfaces.AuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
