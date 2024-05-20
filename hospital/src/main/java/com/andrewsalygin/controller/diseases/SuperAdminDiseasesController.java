@@ -22,7 +22,7 @@ public class SuperAdminDiseasesController implements SuperAdminDiseasesApi {
     }
 
     @Override
-    public ResponseEntity<DiseaseFullInfo> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId) {
+    public ResponseEntity<Void> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId) {
         return diseasesService.editDisease(diseaseId, diseaseWithoutId);
     }
 }

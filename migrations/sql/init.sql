@@ -25,8 +25,8 @@ CREATE TABLE doctor (
 
 CREATE TABLE disease (
     diseaseId int IDENTITY(1,1) NOT NULL,
-    diseaseName varchar(100) NOT NULL,
-    diseaseCode varchar(10) NOT NULL,
+    diseaseName varchar(100) UNIQUE NOT NULL,
+    diseaseCode varchar(10) UNIQUE NOT NULL,
     commonDiseaseDuration varchar(100) NULL
 );
 

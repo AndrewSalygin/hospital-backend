@@ -1,14 +1,21 @@
 package com.andrewsalygin.service.jdbc;
 
+import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
+import com.andrewsalygin.dto.disease.DiseaseWithoutIdDTO;
+import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
 import com.andrewsalygin.hospital.model.DiseaseFullInfo;
 import com.andrewsalygin.hospital.model.DiseaseWithoutId;
 import com.andrewsalygin.hospital.model.PatientShortInfo;
 import com.andrewsalygin.repository.interfaces.DiseasesRepository;
 import com.andrewsalygin.service.interfaces.DiseasesService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
@@ -18,28 +25,49 @@ public class JdbcDiseasesService implements DiseasesService {
 
     private final DiseasesRepository diseasesRepository;
 
+    private final ModelMapper modelMapper;
+
     @Override
     public ResponseEntity<List<DiseaseFullInfo>> getDiseases(Integer limit, Integer offset) {
-        return null;
+        List<DiseaseFullInfoDTO> resultFromRepository = diseasesRepository.getDiseases(limit, offset);
+
+        Type listType = new TypeToken<List<DiseaseFullInfo>>() {}.getType();
+        List<DiseaseFullInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<DiseaseFullInfo> getDisease(Integer diseaseId) {
-        return null;
+        DiseaseFullInfoDTO diseaseFullInfoDTO = diseasesRepository.getDisease(diseaseId);
+        DiseaseFullInfo diseaseFullInfo = modelMapper.map(diseaseFullInfoDTO, DiseaseFullInfo.class);
+
+        return new ResponseEntity<>(diseaseFullInfo, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<PatientShortInfo>> getPatientsWithDisease(Integer diseaseId) {
-        return null;
+        List<PatientShortInfoDTO> resultFromRepository = diseasesRepository.getPatientsWithDisease(diseaseId);
+
+        Type listType = new TypeToken<List<PatientShortInfo>>() {}.getType();
+        List<PatientShortInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> addDisease(DiseaseWithoutId diseaseWithoutId) {
-        return null;
+        DiseaseWithoutIdDTO diseaseWithoutIdDTO = modelMapper.map(diseaseWithoutId, DiseaseWithoutIdDTO.class);
+        diseasesRepository.addDisease(diseaseWithoutIdDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<DiseaseFullInfo> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId) {
-        return null;
+    public ResponseEntity<Void> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId) {
+        DiseaseWithoutIdDTO diseaseWithoutIdDTO = modelMapper.map(diseaseWithoutId, DiseaseWithoutIdDTO.class);
+        diseasesRepository.editDisease(diseaseId, diseaseWithoutIdDTO);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

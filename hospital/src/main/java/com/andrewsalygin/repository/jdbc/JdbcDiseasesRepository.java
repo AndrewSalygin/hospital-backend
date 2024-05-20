@@ -2,6 +2,8 @@ package com.andrewsalygin.repository.jdbc;
 
 import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
 import com.andrewsalygin.dto.disease.DiseaseWithoutIdDTO;
+import com.andrewsalygin.dto.doctor.DoctorFullInfoDTO;
+import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
 import com.andrewsalygin.dto.patient.PatientShortInfoDTO;
 import com.andrewsalygin.repository.interfaces.DiseasesRepository;
 import java.util.List;
@@ -17,26 +19,68 @@ public class JdbcDiseasesRepository implements DiseasesRepository {
 
     @Override
     public List<DiseaseFullInfoDTO> getDiseases(Integer limit, Integer offset) {
-        return List.of();
+        String query = "";
+        if (limit == -1) {
+            query = "SELECT diseaseId, diseaseName, diseaseCode, commonDiseaseDuration " +
+                "FROM disease " +
+                "ORDER BY diseaseId " +
+                "OFFSET :offset ROWS";
+        } else if (limit > 0) {
+            query = "SELECT diseaseId, diseaseName, diseaseCode, commonDiseaseDuration " +
+                "FROM disease " +
+                "ORDER BY diseaseId " +
+                "OFFSET :offset ROWS " +
+                "FETCH NEXT :limit ROWS ONLY";
+        }
+        return client.sql(query)
+            .param("limit", limit)
+            .param("offset", offset)
+            .query(DiseaseFullInfoDTO.class)
+            .list();
     }
 
     @Override
     public DiseaseFullInfoDTO getDisease(Integer diseaseId) {
-        return null;
+        return client.sql("SELECT diseaseId, diseaseName, diseaseCode, commonDiseaseDuration " +
+                "FROM disease " +
+                "WHERE diseaseId = ?")
+            .param(diseaseId)
+            .query(DiseaseFullInfoDTO.class)
+            .single();
     }
 
     @Override
     public List<PatientShortInfoDTO> getPatientsWithDisease(Integer diseaseId) {
-        return List.of();
+        return client.sql("SELECT p.patientId, p.lastName, p.firstName, p.middleName, p.gender, p.dateOfBirth, " +
+                "p.isDeleted " +
+                "FROM patient p " +
+                "INNER JOIN patientDiseasesJournal pdj ON p.patientId = pdj.patientId " +
+                "WHERE pdj.diseaseId = ?")
+            .param(diseaseId)
+            .query(PatientShortInfoDTO.class)
+            .list();
     }
 
     @Override
     public void addDisease(DiseaseWithoutIdDTO diseaseWithoutId) {
-
+        client.sql("INSERT INTO disease (diseaseName, diseaseCode, commonDiseaseDuration) VALUES (?, ?, ?)")
+            .params(
+                diseaseWithoutId.getDiseaseName(),
+                diseaseWithoutId.getDiseaseCode(),
+                diseaseWithoutId.getCommonDiseaseDuration()
+            )
+            .update();
     }
 
     @Override
-    public DiseaseFullInfoDTO editDisease(Integer diseaseId, DiseaseWithoutIdDTO diseaseWithoutId) {
-        return null;
+    public void editDisease(Integer diseaseId, DiseaseWithoutIdDTO diseaseWithoutId) {
+        client.sql("UPDATE disease SET diseaseName = ?, diseaseCode = ?, commonDiseaseDuration = ? WHERE diseaseId = ?")
+            .params(
+                diseaseWithoutId.getDiseaseName(),
+                diseaseWithoutId.getDiseaseCode(),
+                diseaseWithoutId.getCommonDiseaseDuration(),
+                diseaseId
+            )
+            .update();
     }
 }

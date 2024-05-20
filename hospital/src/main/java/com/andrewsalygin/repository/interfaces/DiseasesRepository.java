@@ -15,5 +15,5 @@ public interface DiseasesRepository {
 
     void addDisease(DiseaseWithoutIdDTO diseaseWithoutId);
 
-    DiseaseFullInfoDTO editDisease(Integer diseaseId, DiseaseWithoutIdDTO diseaseWithoutId);
+    void editDisease(Integer diseaseId, DiseaseWithoutIdDTO diseaseWithoutId);
 }

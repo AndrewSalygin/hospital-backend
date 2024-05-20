@@ -1416,10 +1416,6 @@ paths:
       responses:
         '200':
           description: Информация о болезни успешно изменена
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DiseaseFullInfo'
         "400":
           description: Некорректные параметры запроса
           content:

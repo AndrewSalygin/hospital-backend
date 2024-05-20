@@ -16,5 +16,5 @@ public interface DiseasesService {
 
     ResponseEntity<Void> addDisease(DiseaseWithoutId diseaseWithoutId);
 
-    ResponseEntity<DiseaseFullInfo> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId);
+    ResponseEntity<Void> editDisease(Integer diseaseId, DiseaseWithoutId diseaseWithoutId);
 }
