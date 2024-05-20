@@ -829,6 +829,19 @@ paths:
           required: true
           schema:
             type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых болезней
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству болезней
       responses:
         '200':
           description: Список операций успешно получен
@@ -1091,8 +1104,7 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/IdResponse'
+                $ref: '#/components/schemas/IdResponse'
         "400":
           description: Некорректные параметры запроса
           content:
@@ -3495,6 +3507,12 @@ components:
         patientId:
           type: integer
         scheduledDateTime:
+          type: string
+          format: date-time
+        startTime:
+          type: string
+          format: date-time
+        endTime:
           type: string
           format: date-time
         surgeryType:

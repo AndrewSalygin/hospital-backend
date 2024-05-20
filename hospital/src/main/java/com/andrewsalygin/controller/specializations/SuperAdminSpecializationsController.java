@@ -17,7 +17,7 @@ public class SuperAdminSpecializationsController implements SuperAdminSpecializa
     private final SpecializationsService specializationsService;
 
     @Override
-    public ResponseEntity<List<IdResponse>> addSpecialization(String specializationName) {
+    public ResponseEntity<IdResponse> addSpecialization(String specializationName) {
         return specializationsService.addSpecialization(specializationName);
     }
 

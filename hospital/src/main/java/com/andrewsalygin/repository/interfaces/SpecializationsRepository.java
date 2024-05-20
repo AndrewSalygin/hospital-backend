@@ -8,11 +8,11 @@ import org.springframework.http.ResponseEntity;
 
 public interface SpecializationsRepository {
 
-    ResponseEntity<List<SpecializationDTO>> getSpecializations();
+    List<SpecializationDTO> getSpecializations();
 
-    ResponseEntity<List<DoctorShortInfoDTO>> getSpecializationsDoctors(Integer specializationId);
+    List<DoctorShortInfoDTO> getSpecializationsDoctors(Integer specializationId);
 
-    ResponseEntity<List<IdResponse>> addSpecialization(String specializationName);
+    Integer addSpecialization(String specializationName);
 
-    ResponseEntity<Void> deleteSpecialization(Integer specializationId);
+    void deleteSpecialization(Integer specializationId);
 }

@@ -17,22 +17,36 @@ public class JdbcSpecializationsRepository implements SpecializationsRepository 
     private final JdbcClient client;
 
     @Override
-    public ResponseEntity<List<SpecializationDTO>> getSpecializations() {
-        return null;
+    public List<SpecializationDTO> getSpecializations() {
+        return client.sql("SELECT specializationId, specializationName FROM specialization")
+            .query(SpecializationDTO.class)
+            .list();
     }
 
     @Override
-    public ResponseEntity<List<DoctorShortInfoDTO>> getSpecializationsDoctors(Integer specializationId) {
-        return null;
+    public List<DoctorShortInfoDTO> getSpecializationsDoctors(Integer specializationId) {
+        return client.sql("SELECT d.doctorId, lastName, firstName, middleName, dateOfBirth, gender, specializationName, yearsOfExperience, isDeleted " +
+                "FROM doctor d " +
+                "INNER JOIN doctorSpecialization ds ON d.doctorId = ds.doctorId " +
+                "INNER JOIN specialization s ON ds.specializationId = s.specializationId " +
+                "WHERE s.specializationId = ?")
+            .param(specializationId)
+            .query(DoctorShortInfoDTO.class)
+            .list();
     }
 
     @Override
-    public ResponseEntity<List<IdResponse>> addSpecialization(String specializationName) {
-        return null;
+    public Integer addSpecialization(String specializationName) {
+        return client.sql("INSERT INTO specialization (specializationName) OUTPUT INSERTED.specializationId VALUES (?)")
+            .param(specializationName)
+            .query(Integer.class)
+            .single();
     }
 
     @Override
-    public ResponseEntity<Void> deleteSpecialization(Integer specializationId) {
-        return null;
+    public void deleteSpecialization(Integer specializationId) {
+        client.sql("DELETE FROM specialization WHERE specializationId = ?")
+            .param(specializationId)
+            .update();
     }
 }

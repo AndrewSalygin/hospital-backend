@@ -12,5 +12,7 @@ public class SurgeryShortInfoDTO {
     private final Integer surgeryId;
     private final Integer patientId;
     private final OffsetDateTime scheduledDateTime;
+    private final OffsetDateTime startTime;
+    private final OffsetDateTime endTime;
     private final String surgeryType;
 }

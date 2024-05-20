@@ -22,95 +22,92 @@ public class JdbcSurgeriesRepository implements SurgeriesRepository {
     private final JdbcClient client;
 
     @Override
-    public ResponseEntity<List<SurgeryFullInfoDTO>> getAllSurgeries(Integer limit, Integer offset) {
-        return null;
+    public List<SurgeryFullInfoDTO> getAllSurgeries(Integer limit, Integer offset) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<IdResponse> createSurgery(SurgeryFullInfoWithoutIdDTO surgeryFullInfoWithoutId) {
-        return null;
+    public Integer createSurgery(SurgeryFullInfoWithoutIdDTO surgeryFullInfoWithoutId) {
+        return 0;
     }
 
     @Override
-    public ResponseEntity<Void> deleteSurgery(Integer surgeryId) {
-        return null;
+    public void deleteSurgery(Integer surgeryId) {
+
     }
 
     @Override
-    public ResponseEntity<Void> updateSurgery(Integer surgeryId, SurgeryFullInfoWithoutIdDTO surgeryFullInfoWithoutId) {
-        return null;
+    public void updateSurgery(Integer surgeryId, SurgeryFullInfoWithoutIdDTO surgeryFullInfoWithoutId) {
+
     }
 
     @Override
-    public ResponseEntity<List<DoctorWithWorkingHoursDTO>> getDoctorsForSurgery(Integer surgeryId) {
-        return null;
+    public List<DoctorWithWorkingHoursDTO> getDoctorsForSurgery(Integer surgeryId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<IdResponse> addDoctorToSurgery(
+    public Integer addDoctorToSurgery(
         Integer surgeryId,
         Integer doctorId,
         Float workingHours,
         Float scheduledWorkingHours
     ) {
-        return null;
+        return 0;
     }
 
     @Override
-    public ResponseEntity<Void> updateDoctorWorkingHours(
+    public void updateDoctorWorkingHours(
         Integer surgeryId,
         Integer doctorId,
         Float workingHours,
         Float scheduledWorkingHours
     ) {
+
+    }
+
+    @Override
+    public List<DoctorSurgeryCountDTO> countSurgeriesByDoctor(OffsetDateTime startDate, OffsetDateTime endDate) {
+        return List.of();
+    }
+
+    @Override
+    public TotalCostDTO calculateTotalMedicationCost(Integer surgeryId) {
         return null;
     }
 
     @Override
-    public ResponseEntity<List<DoctorSurgeryCountDTO>> countSurgeriesByDoctor(
-        OffsetDateTime startDate,
-        OffsetDateTime endDate
-    ) {
-        return null;
+    public void removeMedicationFromSurgery(Integer surgeryId, Integer medicationId) {
+
     }
 
     @Override
-    public ResponseEntity<TotalCostDTO> calculateTotalMedicationCost(Integer surgeryId) {
-        return null;
+    public void removeDoctorFromSurgery(Integer surgeryId, Integer doctorId) {
+
     }
 
     @Override
-    public ResponseEntity<Void> removeMedicationFromSurgery(Integer surgeryId, Integer medicationId) {
-        return null;
+    public List<MedicationWithAmountDTO> getMedicationsForSurgery(Integer surgeryId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<Void> removeDoctorFromSurgery(Integer surgeryId, Integer doctorId) {
-        return null;
+    public void addMedicationToSurgery(Integer surgeryId, Integer medicationId, Integer amount) {
+
     }
 
     @Override
-    public ResponseEntity<List<MedicationWithAmountDTO>> getMedicationsForSurgery(Integer surgeryId) {
-        return null;
+    public void updateSurgeryDescription(Integer surgeryId, String surgicalProcedureDescription) {
+
     }
 
     @Override
-    public ResponseEntity<Void> addMedicationToSurgery(Integer surgeryId, Integer medicationId, Integer amount) {
-        return null;
+    public List<SurgeryFullInfoDTO> getSurgeriesByPatient(Integer patientId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<Void> updateSurgeryDescription(Integer surgeryId, String surgicalProcedureDescription) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<List<SurgeryFullInfoDTO>> getSurgeriesByPatient(Integer patientId) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<SurgeryFullInfoDTO> getSurgeryById(Integer surgeryId) {
+    public SurgeryFullInfoDTO getSurgeryById(Integer surgeryId) {
         return null;
     }
 }

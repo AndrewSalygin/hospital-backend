@@ -18,8 +18,12 @@ public class AdminDoctorsController implements AdminDoctorsApi {
     private final DoctorsService doctorsService;
 
     @Override
-    public ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(Integer doctorId) {
-        return doctorsService.getSurgeriesForDoctor(doctorId);
+    public ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(
+        Integer doctorId,
+        Integer limit,
+        Integer offset
+    ) {
+        return doctorsService.getSurgeriesForDoctor(doctorId, limit, offset);
     }
 
     @Override

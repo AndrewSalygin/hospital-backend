@@ -18,52 +18,52 @@ public class JdbcTreatmentRepository implements TreatmentRepository {
     private final JdbcClient client;
 
     @Override
-    public ResponseEntity<IdResponse> addTreatment(Integer doctorId, Integer medicationId, Integer treatmentTime) {
-        return null;
+    public Integer addTreatment(Integer doctorId, Integer medicationId, Integer treatmentTime) {
+        return 0;
     }
 
     @Override
-    public ResponseEntity<Void> deleteTreatment(Integer treatmentId) {
-        return null;
+    public void deleteTreatment(Integer treatmentId) {
+
     }
 
     @Override
-    public ResponseEntity<Void> updateTreatment(Integer treatmentId, Integer treatmentTime) {
-        return null;
+    public void updateTreatment(Integer treatmentId, Integer treatmentTime) {
+
     }
 
     @Override
-    public ResponseEntity<List<MedicalProcedureFullInfoWithTreatmentDaysDTO>> getMedicalProceduresWithTreatment(Integer treatmentId) {
-        return null;
+    public List<MedicalProcedureFullInfoWithTreatmentDaysDTO> getMedicalProceduresWithTreatment(Integer treatmentId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<IdResponse> addMedicalProcedureToTreatment(Integer treatmentId, Integer procedureId) {
-        return null;
+    public Integer addMedicalProcedureToTreatment(Integer treatmentId, Integer procedureId) {
+        return 0;
     }
 
     @Override
-    public ResponseEntity<List<MedicationsFullInfoWithTreatmentDaysDTO>> getMedicationsWithTreatment(Integer treatmentId) {
-        return null;
+    public List<MedicationsFullInfoWithTreatmentDaysDTO> getMedicationsWithTreatment(Integer treatmentId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<Void> addMedicationToTreatment(Integer treatmentId, Integer medicationId) {
-        return null;
+    public void addMedicationToTreatment(Integer treatmentId, Integer medicationId) {
+
     }
 
     @Override
-    public ResponseEntity<List<TreatmentPriceDTO>> getTreatmentPrice(Integer treatmentId) {
-        return null;
+    public List<TreatmentPriceDTO> getTreatmentPrice(Integer treatmentId) {
+        return List.of();
     }
 
     @Override
-    public ResponseEntity<Void> deleteMedicalProcedureFromTreatment(Integer treatmentId, Integer procedureId) {
-        return null;
+    public void deleteMedicalProcedureFromTreatment(Integer treatmentId, Integer procedureId) {
+
     }
 
     @Override
-    public ResponseEntity<Void> deleteMedicationFromTreatment(Integer treatmentId, Integer medicationId) {
-        return null;
+    public void deleteMedicationFromTreatment(Integer treatmentId, Integer medicationId) {
+
     }
 }

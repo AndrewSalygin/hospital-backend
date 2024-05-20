@@ -12,7 +12,7 @@ public interface SpecializationsService {
 
     ResponseEntity<List<DoctorShortInfo>> getSpecializationsDoctors(Integer specializationId);
 
-    ResponseEntity<List<IdResponse>> addSpecialization(String specializationName);
+    ResponseEntity<IdResponse> addSpecialization(String specializationName);
 
     ResponseEntity<Void> deleteSpecialization(Integer specializationId);
 }

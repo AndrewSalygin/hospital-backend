@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DoctorsService {
 
-    ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(Integer doctorId);
+    ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(Integer doctorId, Integer limit, Integer offset);
 
     ResponseEntity<DoctorInfo> getFirstAvailableDoctorBySpecializationAndExperience(String specializationName);
 

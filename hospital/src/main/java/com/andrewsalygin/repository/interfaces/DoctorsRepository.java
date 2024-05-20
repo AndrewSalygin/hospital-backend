@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DoctorsRepository {
 
-    List<SurgeryShortInfoDTO> getSurgeriesForDoctor(Integer doctorId);
+    List<SurgeryShortInfoDTO> getSurgeriesForDoctor(Integer doctorId, Integer limit, Integer offset);
 
     DoctorInfoDTO getFirstAvailableDoctorBySpecializationAndExperience(String specializationName);
 

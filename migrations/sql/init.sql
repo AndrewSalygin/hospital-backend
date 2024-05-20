@@ -19,7 +19,8 @@ CREATE TABLE doctor (
     gender char(1) NOT NULL,
     education text NOT NULL,
     phoneNumber varchar(15) UNIQUE NOT NULL,
-    emailAddress varchar(255) NULL
+    emailAddress varchar(255) NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE disease (
@@ -57,7 +58,7 @@ CREATE TABLE patientDiseasesJournal (
 
 CREATE TABLE specialization (
     specializationId int IDENTITY(1,1) NOT NULL,
-    specializationName varchar(100) NOT NULL
+    specializationName varchar(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE doctorSpecialization (
