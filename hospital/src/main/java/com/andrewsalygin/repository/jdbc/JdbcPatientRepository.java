@@ -209,7 +209,7 @@ public class JdbcPatientRepository implements PatientRepository {
         Integer medicalHistoryNoteId
     ) {
         Integer recipeId = client.sql(
-                "INSERT INTO recipe(medicationId, expirationDate) OUTPUT INSERTED.recipeId VALUES(?, ?)")
+                "INSERT INTO recipeInsertV(medicationId, expirationDate) OUTPUT INSERTED.recipeId VALUES(?, ?)")
             .param(medicationId)
             .param(expirationDate).query(Integer.class).single();
 

@@ -4078,6 +4078,9 @@ components:
         medicationName:
           type: string
           description: Название медикамента
+        medicationForm:
+          type: string
+          description: Название медикамента
         dosage:
           type: string
           description: Дозировка медикамента
@@ -4099,6 +4102,9 @@ components:
         doctorMiddleName:
           type: string
           description: Отчество доктора
+        isDeleted:
+          type: boolean
+          description: Архивный ли рецепт
     Specialization:
       type: object
       properties:

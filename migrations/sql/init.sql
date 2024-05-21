@@ -134,7 +134,8 @@ CREATE TABLE recipeJournal(
 CREATE TABLE recipe (
     recipeId int IDENTITY(1,1) NOT NULL,
 	medicationId int NOT NULL,
-    expirationDate date NOT NULL
+    expirationDate date NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE treatmentMedication (
@@ -538,12 +539,12 @@ FROM dbo.doctor INNER JOIN
      dbo.doctorSpecialization ON dbo.doctor.doctorId = dbo.doctorSpecialization.doctorId INNER JOIN
      dbo.specialization ON dbo.doctorSpecialization.specializationId = dbo.specialization.specializationId;
 
--- 2 (OK)
+-- 2 (OK) (OK)
 CREATE VIEW dbo.recipeV
 AS
 SELECT  dbo.recipe.recipeId, dbo.medicalHistoryNote.admissionDateTime, dbo.recipe.expirationDate, dbo.medication.medicationName, dbo.medication.medicationForm, dbo.medication.dosage,
      dbo.patient.lastName AS [patientLastName], dbo.patient.firstName AS [patientFirstName], dbo.patient.middleName AS [patientMiddleName], dbo.doctor.lastName AS [doctorLastName],
-     dbo.doctor.firstName AS [doctorFirstName], dbo.doctor.middleName AS [doctorMiddleName]
+     dbo.doctor.firstName AS [doctorFirstName], dbo.doctor.middleName AS [doctorMiddleName], dbo.recipe.isDeleted 
 FROM dbo.recipe INNER JOIN
      dbo.medication ON dbo.recipe.medicationId = dbo.medication.medicationId INNER JOIN
      dbo.recipeJournal ON dbo.recipe.recipeId = dbo.recipeJournal.recipeId INNER JOIN
@@ -569,7 +570,7 @@ FROM dbo.doctorSpecialization
 WHERE yearsOfExperience >= 0
 WITH CHECK OPTION;
 
--- 5 (OK)
+-- 5 (OK) (OK)
 CREATE VIEW dbo.recipeInsertV
 AS
 SELECT *

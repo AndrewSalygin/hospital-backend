@@ -1,12 +1,17 @@
 package com.andrewsalygin.service.jdbc;
 
+import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
 import com.andrewsalygin.hospital.model.RecipeFullInfo;
 import com.andrewsalygin.repository.interfaces.RecipesRepository;
 import com.andrewsalygin.service.interfaces.RecipesService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
@@ -16,18 +21,26 @@ public class JdbcRecipesService implements RecipesService {
 
     private final RecipesRepository recipesRepository;
 
+    private final ModelMapper modelMapper;
+
     @Override
     public ResponseEntity<RecipeFullInfo> getRecipe(Integer recipeId) {
-        return null;
+        RecipeFullInfoDTO recipeDTO = recipesRepository.getRecipe(recipeId);
+        RecipeFullInfo recipe = modelMapper.map(recipeDTO, RecipeFullInfo.class);
+        return new ResponseEntity<>(recipe, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<RecipeFullInfo>> getRecipes(Integer limit, Integer offset) {
-        return null;
+        List<RecipeFullInfoDTO> recipeDTOs = recipesRepository.getRecipes(limit, offset);
+        Type listType = new TypeToken<List<RecipeFullInfo>>() {}.getType();
+        List<RecipeFullInfo> recipes = modelMapper.map(recipeDTOs, listType);
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteRecipe(Integer recipeId) {
-        return null;
+        recipesRepository.deleteRecipe(recipeId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

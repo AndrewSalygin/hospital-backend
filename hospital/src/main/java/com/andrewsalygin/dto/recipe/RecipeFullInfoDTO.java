@@ -14,6 +14,7 @@ public class RecipeFullInfoDTO {
     private final LocalDate admissionDateTime;
     private final LocalDate expirationDate;
     private final String medicationName;
+    private final String medicationForm;
     private final String dosage;
     private final String patientLastName;
     private final String patientFirstName;
@@ -21,4 +22,5 @@ public class RecipeFullInfoDTO {
     private final String doctorLastName;
     private final String doctorFirstName;
     private final String doctorMiddleName;
+    private final Boolean isDeleted;
 }

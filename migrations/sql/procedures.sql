@@ -182,7 +182,7 @@
 -- EXEC dbo.getFirstAvailableDoctorBySpecializationAndExperience @specializationName = 'Пульмонолог'; -- Хирург -- Офтальмолог
 
 
--- 5 (OK)
+-- 5 (OK) (OK)
 -- Расчет общей стоимости лекарств для операции (выходные параметры)
 -- CREATE PROCEDURE dbo.calculateTotalMedicationCost
 --     @surgeryId INT,

@@ -16,21 +16,48 @@ public class JdbcDoctorsMedicalProceduresRepository implements DoctorsMedicalPro
 
     @Override
     public List<DoctorShortInfoDTO> getDoctorsForProcedure(Integer procedureId) {
-        return List.of();
+        String query = "SELECT d.doctorId, d.lastName, d.firstName, d.middleName, d.dateOfBirth, d.gender, " +
+            "s.specializationName, ds.yearsOfExperience, d.isDeleted " +
+            "FROM doctor d " +
+            "INNER JOIN doctorSpecialization ds ON d.doctorId = ds.doctorId " +
+            "INNER JOIN specialization s ON ds.specializationId = s.specializationId " +
+            "INNER JOIN doctorMedicalProcedure dmp ON d.doctorId = dmp.doctorId " +
+            "WHERE dmp.medicalProcedureId = ?";
+
+        return client.sql(query)
+            .param(procedureId)
+            .query(DoctorShortInfoDTO.class)
+            .list();
     }
 
     @Override
     public List<MedicalProcedureFullInfoDTO> getProceduresForDoctor(Integer doctorId) {
-        return List.of();
+        String query = "SELECT mp.medicalProcedureId, mp.medicalProcedureName, mp.price " +
+            "FROM medicalProcedure mp " +
+            "INNER JOIN doctorMedicalProcedure dmp ON mp.medicalProcedureId = dmp.medicalProcedureId " +
+            "WHERE dmp.doctorId = ?";
+
+        return client.sql(query)
+            .param(doctorId)
+            .query(MedicalProcedureFullInfoDTO.class)
+            .list();
     }
 
     @Override
     public void addDoctorProcedure(Integer doctorId, Integer procedureId) {
+        String query = "INSERT INTO doctorMedicalProcedure (doctorId, medicalProcedureId) VALUES (?, ?)";
 
+        client.sql(query)
+            .params(doctorId, procedureId)
+            .update();
     }
 
     @Override
     public void deleteDoctorProcedure(Integer doctorId, Integer procedureId) {
+        String query = "DELETE FROM doctorMedicalProcedure WHERE doctorId = ? AND medicalProcedureId = ?";
 
+        client.sql(query)
+            .params(doctorId, procedureId)
+            .update();
     }
 }

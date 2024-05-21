@@ -1,13 +1,19 @@
 package com.andrewsalygin.service.jdbc;
 
+import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
+import com.andrewsalygin.dto.medicalProcedure.MedicalProcedureFullInfoDTO;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfo;
 import com.andrewsalygin.repository.interfaces.DoctorsMedicalProceduresRepository;
 import com.andrewsalygin.service.interfaces.DoctorsMedicalProceduresService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
@@ -17,23 +23,38 @@ public class JdbcDoctorsMedicalProceduresService implements DoctorsMedicalProced
 
     private final DoctorsMedicalProceduresRepository repository;
 
+    private final ModelMapper modelMapper;
+
+
     @Override
     public ResponseEntity<List<DoctorShortInfo>> getDoctorsForProcedure(Integer procedureId) {
-        return null;
+        List<DoctorShortInfoDTO> resultFromRepository = repository.getDoctorsForProcedure(procedureId);
+
+        Type listType = new TypeToken<List<DoctorShortInfo>>() {}.getType();
+        List<DoctorShortInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<MedicalProcedureFullInfo>> getProceduresForDoctor(Integer doctorId) {
-        return null;
+        List<MedicalProcedureFullInfoDTO> resultFromRepository = repository.getProceduresForDoctor(doctorId);
+
+        Type listType = new TypeToken<List<MedicalProcedureFullInfo>>() {}.getType();
+        List<MedicalProcedureFullInfo> result = modelMapper.map(resultFromRepository, listType);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> addDoctorProcedure(Integer doctorId, Integer procedureId) {
-        return null;
+        repository.addDoctorProcedure(doctorId, procedureId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Void> deleteDoctorProcedure(Integer doctorId, Integer procedureId) {
-        return null;
+        repository.deleteDoctorProcedure(doctorId, procedureId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
