@@ -4,6 +4,7 @@ import com.andrewsalygin.hospital.api.TreatmentsApi;
 import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.MedicalProcedureFullInfoWithTreatmentDays;
 import com.andrewsalygin.hospital.model.MedicationsFullInfoWithTreatmentDays;
+import com.andrewsalygin.hospital.model.TreatmentFullInfo;
 import com.andrewsalygin.hospital.model.TreatmentPrice;
 import com.andrewsalygin.service.interfaces.TreatmentService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,10 @@ public class TreatmentsController implements TreatmentsApi {
 
     private final TreatmentService treatmentService;
 
+
     @Override
-    public ResponseEntity<IdResponse> addTreatment(Integer doctorId, Integer medicationId, Integer treatmentTime) {
-        return treatmentService.addTreatment(doctorId, medicationId, treatmentTime);
+    public ResponseEntity<IdResponse> addTreatment(String treatmentName, Integer doctorId) {
+        return treatmentService.addTreatment(treatmentName, doctorId);
     }
 
     @Override
@@ -30,8 +32,23 @@ public class TreatmentsController implements TreatmentsApi {
     }
 
     @Override
-    public ResponseEntity<Void> updateTreatment(Integer treatmentId, Integer treatmentTime) {
-        return treatmentService.updateTreatment(treatmentId, treatmentTime);
+    public ResponseEntity<Void> updateTreatmentMedicalProcedure(
+        Integer treatmentId,
+        Integer medicalProcedureId,
+        Integer amount,
+        String doctorInstructions
+    ) {
+        return treatmentService.updateTreatmentMedicalProcedure(treatmentId, medicalProcedureId, amount, doctorInstructions);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateTreatmentMedication(
+        Integer treatmentId,
+        Integer medicationId,
+        Integer amount,
+        String doctorInstructions
+    ) {
+        return treatmentService.updateTreatmentMedication(treatmentId, medicationId, amount, doctorInstructions);
     }
 
     @Override
@@ -40,8 +57,13 @@ public class TreatmentsController implements TreatmentsApi {
     }
 
     @Override
-    public ResponseEntity<IdResponse> addMedicalProcedureToTreatment(Integer treatmentId, Integer procedureId) {
-        return treatmentService.addMedicalProcedureToTreatment(treatmentId, procedureId);
+    public ResponseEntity<Void> addMedicalProcedureToTreatment(
+        Integer treatmentId,
+        Integer procedureId,
+        Integer amount,
+        String doctorInstructions
+    ) {
+        return treatmentService.addMedicalProcedureToTreatment(treatmentId, procedureId, amount, doctorInstructions);
     }
 
     @Override
@@ -50,8 +72,13 @@ public class TreatmentsController implements TreatmentsApi {
     }
 
     @Override
-    public ResponseEntity<Void> addMedicationToTreatment(Integer treatmentId, Integer medicationId) {
-        return treatmentService.addMedicationToTreatment(treatmentId, medicationId);
+    public ResponseEntity<Void> addMedicationToTreatment(
+        Integer treatmentId,
+        Integer medicationId,
+        Integer amount,
+        String doctorInstructions
+    ) {
+        return treatmentService.addMedicationToTreatment(treatmentId, medicationId, amount, doctorInstructions);
     }
 
     @Override
@@ -67,5 +94,24 @@ public class TreatmentsController implements TreatmentsApi {
     @Override
     public ResponseEntity<Void> deleteMedicationFromTreatment(Integer treatmentId, Integer medicationId) {
         return treatmentService.deleteMedicationFromTreatment(treatmentId, medicationId);
+    }
+
+    @Override
+    public ResponseEntity<List<TreatmentFullInfo>> getAllTreatments(Integer limit, Integer offset) {
+        return treatmentService.getAllTreatments(limit, offset);
+    }
+
+    @Override
+    public ResponseEntity<List<TreatmentFullInfo>> getDoctorTreatments(
+        Integer doctorId,
+        Integer limit,
+        Integer offset
+    ) {
+        return treatmentService.getDoctorTreatments(doctorId, limit, offset);
+    }
+
+    @Override
+    public ResponseEntity<TreatmentFullInfo> getTreatmentById(Integer treatmentId) {
+        return treatmentService.getTreatmentById(treatmentId);
     }
 }

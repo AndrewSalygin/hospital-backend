@@ -60,17 +60,13 @@ public class JdbcDoctorsRepository implements DoctorsRepository {
         if (limit == -1) {
             query = "SELECT d.doctorId, lastName, firstName, middleName, dateOfBirth, gender, " +
                 "specializationName, yearsOfExperience, isDeleted " +
-                "FROM doctor d " +
-                "INNER JOIN doctorSpecialization ds ON d.doctorId = ds.doctorId " +
-                "INNER JOIN specialization s ON ds.specializationId = s.specializationId " +
+                "FROM doctorV d " +
                 "ORDER BY d.doctorId " +
                 "OFFSET :offset ROWS";
         } else if (limit > 0) {
             query = "SELECT d.doctorId, lastName, firstName, middleName, dateOfBirth, gender, " +
                 "specializationName, yearsOfExperience, isDeleted " +
-                "FROM doctor d " +
-                "INNER JOIN doctorSpecialization ds ON d.doctorId = ds.doctorId " +
-                "INNER JOIN specialization s ON ds.specializationId = s.specializationId " +
+                "FROM doctorV d " +
                 "ORDER BY d.doctorId " +
                 "OFFSET :offset ROWS " +
                 "FETCH NEXT :limit ROWS ONLY";
@@ -113,7 +109,7 @@ public class JdbcDoctorsRepository implements DoctorsRepository {
 
     @Override
     public void addSpecializationToDoctor(Integer doctorId, Integer specializationId, Integer yearsOfExperience) {
-        client.sql("INSERT INTO doctorSpecialization (doctorId, specializationId, yearsOfExperience) VALUES (?, ?, ?)")
+        client.sql("INSERT INTO doctorSpecializationInsertV (doctorId, specializationId, yearsOfExperience) VALUES (?, ?, ?)")
             .params(doctorId, specializationId, yearsOfExperience)
             .update();
     }

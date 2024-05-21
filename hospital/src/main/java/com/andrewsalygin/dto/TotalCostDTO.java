@@ -8,5 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 public class TotalCostDTO {
+    private final Float totalMedicationsCost;
+    private final Float totalMedicalProceduresCost;
     private final Float totalMedicationCost;
 }

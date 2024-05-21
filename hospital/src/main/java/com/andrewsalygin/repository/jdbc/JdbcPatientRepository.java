@@ -253,10 +253,9 @@ public class JdbcPatientRepository implements PatientRepository {
     @Override
     public List<PatientWithDiseaseDTO> getPatientsDiseases(Integer limit, Integer offset) {
         if (limit == -1) {
-            String query = "SELECT p.lastName, p.firstName, p.middleName, p.gender, p.dateOfBirth, d.diseaseCode," +
-                " d.diseaseName, pdj.dispensaryAccounting FROM patient p INNER JOIN patientDiseasesJournal pdj " +
-                "ON p.patientId = pdj.patientId INNER JOIN disease d ON pdj.diseaseId = d.diseaseId " +
-                "ORDER BY p.patientId OFFSET ? ROWS";
+            String query = "SELECT lastName, firstName, middleName, gender, dateOfBirth, diseaseCode, " +
+                "diseaseName, dispensaryAccounting FROM patientDiseaseV " +
+                "ORDER BY diseaseName OFFSET ? ROWS";
 
             return client.sql(query)
                 .param(offset)

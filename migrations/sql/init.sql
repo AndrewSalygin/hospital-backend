@@ -110,9 +110,9 @@ CREATE TABLE medicationList (
 
 CREATE TABLE treatment (
     treatmentId  int IDENTITY(1,1) NOT NULL,
+    treatmentName varchar(255) NOT NULL,
     doctorId int NOT NULL,
-    doctorInstructions text NOT NULL,
-    treatmentTime varchar(100) NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE medicalProcedure (
@@ -136,12 +136,14 @@ CREATE TABLE recipe (
 CREATE TABLE treatmentMedication (
 	treatmentId int NOT NULL,
 	medicationId int NOT NULL,
+    doctorInstructions text,
     amount int NOT NULL
 );
 
 CREATE TABLE treatmentMedicalProcedure (
     treatmentId int NOT NULL,
     medicalProcedureId int NOT NULL,
+    doctorInstructions text,
     amount int NOT NULL
 );
 
@@ -251,6 +253,10 @@ ALTER TABLE treatmentMedicalProcedure
         CONSTRAINT FK_treatmentMedicalProcedure_medicalProcedure FOREIGN KEY (medicalProcedureId)
             REFERENCES medicalProcedure (medicalProcedureId);
 
+alter table treatmentMedicalProcedure
+    add constraint treatmentMedicalProcedure_pk
+        unique (treatmentId, medicalProcedureId, amount)
+
 ALTER TABLE doctorMedicalProcedure
     ADD CONSTRAINT FK_doctorMedicalProcedure_doctor FOREIGN KEY (doctorId)
         REFERENCES doctor (doctorId),
@@ -264,6 +270,10 @@ ALTER TABLE surgery
 ALTER TABLE treatment
     ADD CONSTRAINT FK_treatment_doctor FOREIGN KEY (doctorId)
         REFERENCES doctor (doctorId);
+
+alter table treatment
+    add constraint treatment_pk
+        unique (treatmentName, doctorId, isDeleted)
 
 INSERT INTO patient (lastName, firstName, middleName, gender, dateOfBirth, phoneNumber, insuranceInformation)
 VALUES
@@ -377,27 +387,27 @@ VALUES
 ('Меропенем', 'Порошок для приготовления раствора', '1 г', 'ФармПроизводство', 'Россия', '2023-09-25', '2024-09-25', 0, 1200, 60),
 ('Дексаметазон', 'Таблетки', '4 мг', 'ФармХим', 'Россия', '2023-11-15', '2024-11-15', 0, 1200, 45);
 
-INSERT INTO treatment (doctorId, doctorInstructions, treatmentTime)
+INSERT INTO treatment (treatmentName, doctorId)
 VALUES
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(1, 'Принимать по 1 чайной ложке 2 раза в день после еды', '10 дней'),
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(1, 'Принимать по 1 таблетке 1 раз в день после еды', '7 дней'),
-(3, 'Электротерапия в течение 20 минут в день', '14 дней'),
-(3, 'Упражнения Ларкина в течение 10 минут в день', '10 дней');
+('Лечение 1', 1),
+('Лечение 2', 1),
+('Лечение 3', 1),
+('Лечение 4', 1),
+('Лечение 5', 1),
+('Лечение 6', 1),
+('Лечение 7', 1),
+('Лечение 1', 3),
+('Лечение 2', 3);
 
-INSERT INTO treatmentMedication (treatmentId, medicationId, Amount)
+INSERT INTO treatmentMedication (treatmentId, medicationId, amount, doctorInstructions)
 VALUES
-(1, 1, 1),
-(2, 2, 1),
-(3, 3, 1),
-(4, 4, 1),
-(5, 5, 1),
-(6, 6, 1),
-(7, 7, 1);
+(1, 1, 1, 'Принимать по 1 чайной ложке 2 раза в день после еды'),
+(2, 2, 1, 'Принимать по 2 чайной ложки 2 раза в день после еды'),
+(3, 3, 1, 'Принимать по 1 таблетке 1 раз в день после еды'),
+(4, 4, 1, 'Принимать по 1 таблетке 1 раз в день после еды'),
+(5, 5, 1, 'Принимать по 1 таблетке 1 раз в день после еды'),
+(6, 6, 1, 'Принимать по 1 таблетке 1 раз в день после еды'),
+(7, 7, 1, 'Принимать по 1 таблетке 1 раз в день после еды');
 
 INSERT INTO diseaseList (diseaseId, medicalHistoryNoteId, treatmentId, resultsOfTreatment)
 VALUES
@@ -516,10 +526,10 @@ VALUES
 (13, 13, 10); -- Иванова - ЛФК
 
 
--- 1 (OK)
+-- 1 (OK) (OK)
 CREATE VIEW dbo.doctorV
 AS
-SELECT dbo.doctor.lastName, dbo.doctor.firstName, dbo.doctor.middleName, dbo.doctor.dateOfBirth, dbo.doctor.gender, dbo.specialization.specializationName, dbo.doctorSpecialization.yearsOfExperience
+SELECT dbo.doctor.doctorId, dbo.doctor.lastName, dbo.doctor.firstName, dbo.doctor.middleName, dbo.doctor.dateOfBirth, dbo.doctor.gender, dbo.specialization.specializationName, dbo.doctorSpecialization.yearsOfExperience, dbo.doctor.isDeleted
 FROM dbo.doctor INNER JOIN
      dbo.doctorSpecialization ON dbo.doctor.doctorId = dbo.doctorSpecialization.doctorId INNER JOIN
      dbo.specialization ON dbo.doctorSpecialization.specializationId = dbo.specialization.specializationId;
@@ -538,7 +548,7 @@ FROM dbo.recipe INNER JOIN
      dbo.medicalHistoryNote ON dbo.patientJournal.medicalHistoryNoteId = dbo.medicalHistoryNote.medicalHistoryNoteId INNER JOIN
      dbo.patient ON dbo.patientJournal.patientId = dbo.patient.patientId ON dbo.recipeJournal.medicalHistoryNoteId = dbo.medicalHistoryNote.medicalHistoryNoteId AND dbo.recipeJournal.patientId = dbo.patient.patientId;
 
--- 3 (OK)
+-- 3 (OK) (OK)
 CREATE VIEW dbo.patientDiseaseV
 AS
 SELECT  dbo.patient.lastName, dbo.patient.firstName, dbo.patient.middleName, dbo.patient.gender, dbo.patient.dateOfBirth, dbo.disease.diseaseCode, dbo.disease.diseaseName,
@@ -547,7 +557,7 @@ FROM    dbo.disease INNER JOIN
         dbo.patientDiseasesJournal ON dbo.disease.diseaseId = dbo.patientDiseasesJournal.diseaseId INNER JOIN
         dbo.patient ON dbo.patientDiseasesJournal.patientId = dbo.patient.patientId;
 
--- 4 (OK)
+-- 4 (OK) (OK)
 CREATE VIEW dbo.doctorSpecializationInsertV
 AS
 SELECT *
@@ -563,7 +573,7 @@ FROM dbo.recipe
 WHERE expirationDate >= GETDATE()
 WITH CHECK OPTION;
 
--- 6 (OK)
+-- 6 (OK) (OK)
 CREATE VIEW dbo.patientInsertV
 AS
 SELECT *
@@ -660,7 +670,7 @@ BEGIN
     SELECT * FROM @results;
 END;
 
--- 4 (OK)
+-- 4 (OK) (OK)
 -- Получение первого освободившегося опытного доктора с операции (курсор + условные)
 CREATE PROCEDURE dbo.getFirstAvailableDoctorBySpecializationAndExperience
     @specializationName VARCHAR(100)

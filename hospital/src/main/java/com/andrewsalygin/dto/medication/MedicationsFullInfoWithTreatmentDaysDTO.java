@@ -20,5 +20,6 @@ public class MedicationsFullInfoWithTreatmentDaysDTO {
     private final Boolean isPrescription;
     private final Float price;
     private final Integer availableCount;
-    private final Integer treatmentDays;
+    private final Integer amount;
+    private final String doctorInstructions;
 }

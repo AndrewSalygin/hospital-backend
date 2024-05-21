@@ -11,5 +11,6 @@ public class MedicalProcedureFullInfoWithTreatmentDaysDTO {
     private final Integer medicalProcedureId;
     private final String medicalProcedureName;
     private final Float price;
-    private final Integer treatmentDays;
+    private final Integer amount;
+    private final String doctorInstructions;
 }

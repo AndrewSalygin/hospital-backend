@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Hospital API
   description: "API для Hospital"
-  version: 2.3.0
+  version: 2.4.0
 
 servers:
   - url: https://hospital.com/
@@ -1954,12 +1954,60 @@ paths:
 
   #################### treatments ####################
   /treatments:
+    get:
+      operationId: getAllTreatments
+      tags:
+        - treatments
+      summary: Получить весь список лечений
+      parameters:
+        - name: limit
+          in: query
+          description: Лимит количества записей
+          required: false
+          schema:
+            type: integer
+            minimum: -1
+        - name: offset
+          in: query
+          description: Смещение для выборки
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список лечений успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreatmentFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечения не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
     post:
       operationId: addTreatment
       tags:
         - treatments
       summary: Добавить лечение
       parameters:
+        - name: treatmentName
+          in: query
+          description: Название лечения
+          required: true
+          schema:
+            type: string
         - name: doctorId
           in: query
           description: Id доктора
@@ -1986,7 +2034,88 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiErrorResponse'
 
+  /treatments/doctor/{doctorId}:
+    get:
+      operationId: getDoctorTreatments
+      tags:
+        - treatments
+      summary: Получить список лечений доктора
+      parameters:
+        - name: doctorId
+          in: path
+          description: Id доктора
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Лимит количества записей
+          required: false
+          schema:
+            type: integer
+            minimum: -1
+        - name: offset
+          in: query
+          description: Смещение для выборки
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список лечений доктора успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TreatmentFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечения для указанного доктора не найдены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
   /treatments/{treatmentId}:
+    get:
+      operationId: getTreatmentById
+      tags:
+        - treatments
+      summary: Получить лечение по Id
+      parameters:
+        - name: treatmentId
+          in: path
+          description: Id лечения
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Лечение успешно получено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreatmentFullInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Лечение с указанным Id не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
     delete:
       operationId: deleteTreatment
       tags:
@@ -3457,6 +3586,17 @@ paths:
 
 components:
   schemas:
+    TreatmentFullInfo:
+      type: object
+      properties:
+        treatmentId:
+          type: integer
+        treatmentName:
+          type: string
+        doctorId:
+          type: integer
+        isDeleted:
+          type: boolean
     TotalCost:
       type: object
       properties:
