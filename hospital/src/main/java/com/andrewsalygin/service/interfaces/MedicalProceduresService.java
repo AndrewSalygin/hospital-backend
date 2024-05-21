@@ -15,7 +15,7 @@ public interface MedicalProceduresService {
 
     ResponseEntity<IdResponse> addMedicalProcedure(MedicalProcedureWithoutId medicalProcedureWithoutId);
 
-    ResponseEntity<DiseaseFullInfo> editMedicalProcedure(Integer medicalProcedureId, MedicalProcedureWithoutId medicalProcedureWithoutId);
+    ResponseEntity<Void> editMedicalProcedure(Integer medicalProcedureId, MedicalProcedureWithoutId medicalProcedureWithoutId);
 
     ResponseEntity<Void> deleteMedicalProcedure(Integer medicalProcedureId);
 }

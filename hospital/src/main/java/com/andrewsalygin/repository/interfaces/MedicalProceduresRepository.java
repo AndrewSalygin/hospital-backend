@@ -1,7 +1,5 @@
 package com.andrewsalygin.repository.interfaces;
 
-import com.andrewsalygin.dto.disease.DiseaseFullInfoDTO;
-import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.dto.medicalProcedure.MedicalProcedureFullInfoDTO;
 import com.andrewsalygin.dto.medicalProcedure.MedicalProcedureWithoutIdDTO;
 import java.util.List;
@@ -12,9 +10,9 @@ public interface MedicalProceduresRepository {
 
     MedicalProcedureFullInfoDTO getMedicalProcedure(Integer medicalProcedureId);
 
-    IdResponse addMedicalProcedure(MedicalProcedureWithoutIdDTO medicalProcedureWithoutId);
+    Integer addMedicalProcedure(MedicalProcedureWithoutIdDTO medicalProcedureWithoutId);
 
-    DiseaseFullInfoDTO editMedicalProcedure(Integer medicalProcedureId, MedicalProcedureWithoutIdDTO medicalProcedureWithoutId);
+    void editMedicalProcedure(Integer medicalProcedureId, MedicalProcedureWithoutIdDTO medicalProcedureWithoutId);
 
     void deleteMedicalProcedure(Integer medicalProcedureId);
 }

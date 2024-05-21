@@ -23,7 +23,7 @@ public class SuperAdminMedicalProceduresController implements SuperAdminMedicalP
     }
 
     @Override
-    public ResponseEntity<DiseaseFullInfo> editMedicalProcedure(
+    public ResponseEntity<Void> editMedicalProcedure(
         Integer medicalProcedureId,
         MedicalProcedureWithoutId medicalProcedureWithoutId
     ) {

@@ -99,7 +99,8 @@ CREATE TABLE medication (
     expireDate date NOT NULL,
     isPrescription bit NOT NULL,
     price float NOT NULL,
-    availableCount int NOT NULL
+    availableCount int NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE medicationList (
@@ -118,7 +119,8 @@ CREATE TABLE treatment (
 CREATE TABLE medicalProcedure (
     medicalProcedureId int IDENTITY(1,1) NOT NULL,
     medicalProcedureName varchar(100) NOT NULL,
-    price float NOT NULL
+    price float NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE recipeJournal(

@@ -10,7 +10,7 @@ public interface MedicationsRepository {
 
     void setNewMedicationFeatures(Integer medicationId, NewInfoMedicationDTO newInfoMedication);
 
-    IdResponse addMedication(MedicationWithoutIdDTO medicationWithoutId);
+    Integer addMedication(MedicationWithoutIdDTO medicationWithoutId);
 
     void deleteMedication(Integer medicationId);
 
