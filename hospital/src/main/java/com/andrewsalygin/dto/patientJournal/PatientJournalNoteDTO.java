@@ -16,4 +16,5 @@ public class PatientJournalNoteDTO {
     private final Boolean discharge;
     private final String patientStatus;
     private final OffsetDateTime admissionDateTime;
+    private final Boolean isDeleted;
 }

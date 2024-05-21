@@ -47,7 +47,8 @@ CREATE TABLE patientJournal (
     doctorId int NOT NULL,
     initialAdmission bit NOT NULL,
     discharge bit NOT NULL,
-    patientStatus varchar(100) NOT NULL
+    patientStatus varchar(100) NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE patientDiseasesJournal (
@@ -85,7 +86,7 @@ CREATE TABLE diseaseList (
     diseaseId int NOT NULL,
     medicalHistoryNoteId int NOT NULL,
     treatmentId int NULL,
-    resultsOfTreatment varchar(255) NOT NULL
+    resultsOfTreatment varchar(255) NULL
 );
 
 CREATE TABLE medication (
@@ -583,7 +584,7 @@ FROM dbo.patient
 WHERE gender IN ('М', 'Ж')
 WITH CHECK OPTION;
 
--- 1 (OK)
+-- 1 (OK) (OK)
 -- Процедура для обновления информации о лекарствах
 CREATE PROCEDURE dbo.updateMedicationStock
     @medicationId int,
@@ -598,7 +599,7 @@ BEGIN
     WHERE medicationId = @medicationId;
 END;
 
--- 2 (OK)
+-- 2 (OK) (OK)
 -- Процедура для расчета затрат на лечение пациента (выходные параметры)
 CREATE PROCEDURE dbo.calculateTreatmentCosts
     @treatmentId int,

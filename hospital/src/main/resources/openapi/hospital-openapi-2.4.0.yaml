@@ -3858,6 +3858,8 @@ components:
               resultsOfTreatment:
                 type: string
                 description: Результаты лечения
+        isDeleted:
+          type: boolean
     PatientJournalNote:
       type: object
       properties:
@@ -3883,6 +3885,8 @@ components:
           type: string
           description: Дата и время приёма
           format: date-time
+        isDeleted:
+          type: boolean
     CreatePatientJournalNote:
       type: object
       properties:

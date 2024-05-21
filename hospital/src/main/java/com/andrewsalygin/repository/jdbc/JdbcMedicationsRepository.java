@@ -18,13 +18,18 @@ public class JdbcMedicationsRepository implements MedicationsRepository {
 
     @Override
     public void setNewMedicationFeatures(Integer medicationId, NewInfoMedicationDTO newInfoMedication) {
-        client.sql("UPDATE medication SET availableCount = ?, price = ?, dateOfManufacture = ?, expireDate = ? " +
-                "WHERE medicationId = ? AND isDeleted = 0")
+        client.sql("EXEC dbo.updateMedicationStock " +
+                "    @medicationId = ?, " +
+                "    @newCount = ?, " +
+                "    @newPrice = ?, " +
+                "    @dateOfManufacture = ?, " +
+                "    @expireDate = ?; " +
+                "SELECT * FROM dbo.medication;")
+            .param(medicationId)
             .param(newInfoMedication.getAvailableCount())
             .param(newInfoMedication.getPrice())
             .param(newInfoMedication.getDateOfManufacture())
             .param(newInfoMedication.getExpireDate())
-            .param(medicationId)
             .update();
     }
 
