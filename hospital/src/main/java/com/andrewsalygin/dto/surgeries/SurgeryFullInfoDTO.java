@@ -17,4 +17,5 @@ public class SurgeryFullInfoDTO {
     private final String surgeryType;
     private final String surgicalProcedureDescription;
     private final Boolean emergency;
+    private final Boolean isDeleted;
 }

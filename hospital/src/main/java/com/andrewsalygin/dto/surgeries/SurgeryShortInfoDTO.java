@@ -15,4 +15,5 @@ public class SurgeryShortInfoDTO {
     private final OffsetDateTime startTime;
     private final OffsetDateTime endTime;
     private final String surgeryType;
+    private final Boolean isDeleted;
 }

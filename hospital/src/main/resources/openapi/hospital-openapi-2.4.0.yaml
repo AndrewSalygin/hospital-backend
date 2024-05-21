@@ -3198,10 +3198,6 @@ paths:
       responses:
         '200':
           description: Врач успешно добавлен в операцию
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IdResponse'
         '400':
           description: Некорректные параметры запроса
           content:
@@ -3276,14 +3272,14 @@ paths:
           required: true
           schema:
             type: string
-            format: date-time
+            format: date
         - name: endDate
           in: query
           description: Конечная дата периода
           required: true
           schema:
             type: string
-            format: date-time
+            format: date
       responses:
         '200':
           description: Количество операций по докторам успешно получено
@@ -3669,6 +3665,9 @@ components:
         emergency:
           type: boolean
           description: Экстренная операция
+        isDeleted:
+          type: boolean
+          description: Архивная операция
     SurgeryFullInfoWithoutId:
       type: object
       properties:
@@ -3714,6 +3713,9 @@ components:
           format: date-time
         surgeryType:
           type: string
+        isDeleted:
+          type: boolean
+          description: Архивная операция
     TreatmentPrice:
       type: object
       properties:

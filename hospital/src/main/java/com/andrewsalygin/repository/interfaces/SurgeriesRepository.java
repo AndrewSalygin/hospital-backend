@@ -6,6 +6,7 @@ import com.andrewsalygin.dto.surgeries.DoctorSurgeryCountDTO;
 import com.andrewsalygin.dto.surgeries.DoctorWithWorkingHoursDTO;
 import com.andrewsalygin.dto.surgeries.SurgeryFullInfoDTO;
 import com.andrewsalygin.dto.surgeries.SurgeryFullInfoWithoutIdDTO;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -21,11 +22,11 @@ public interface SurgeriesRepository {
 
     List<DoctorWithWorkingHoursDTO> getDoctorsForSurgery(Integer surgeryId);
 
-    Integer addDoctorToSurgery(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
+    void addDoctorToSurgery(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
 
     void updateDoctorWorkingHours(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
 
-    List<DoctorSurgeryCountDTO> countSurgeriesByDoctor(OffsetDateTime startDate, OffsetDateTime endDate);
+    List<DoctorSurgeryCountDTO> countSurgeriesByDoctor(LocalDate startDate, LocalDate endDate);
 
     TotalCostDTO calculateTotalMedicationCost(Integer surgeryId);
 

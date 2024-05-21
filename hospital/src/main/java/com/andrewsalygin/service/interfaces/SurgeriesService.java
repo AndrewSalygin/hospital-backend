@@ -8,6 +8,7 @@ import com.andrewsalygin.hospital.model.SurgeryFullInfo;
 import com.andrewsalygin.hospital.model.SurgeryFullInfoWithoutId;
 import com.andrewsalygin.hospital.model.TotalCost;
 import org.springframework.http.ResponseEntity;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -23,11 +24,11 @@ public interface SurgeriesService {
 
     ResponseEntity<List<DoctorWithWorkingHours>> getDoctorsForSurgery(Integer surgeryId);
 
-    ResponseEntity<IdResponse> addDoctorToSurgery(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
+    ResponseEntity<Void> addDoctorToSurgery(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
 
     ResponseEntity<Void> updateDoctorWorkingHours(Integer surgeryId, Integer doctorId, Float workingHours, Float scheduledWorkingHours);
 
-    ResponseEntity<List<DoctorSurgeryCount>> countSurgeriesByDoctor(OffsetDateTime startDate, OffsetDateTime endDate);
+    ResponseEntity<List<DoctorSurgeryCount>> countSurgeriesByDoctor(LocalDate startDate, LocalDate endDate);
 
     ResponseEntity<TotalCost> calculateTotalMedicationCost(Integer surgeryId);
 

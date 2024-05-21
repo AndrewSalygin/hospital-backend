@@ -7,6 +7,7 @@ import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.SurgeryFullInfoWithoutId;
 import com.andrewsalygin.hospital.model.TotalCost;
 import com.andrewsalygin.service.interfaces.SurgeriesService;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class AdminSurgeriesController implements AdminSurgeriesApi {
     }
 
     @Override
-    public ResponseEntity<IdResponse> addDoctorToSurgery(
+    public ResponseEntity<Void> addDoctorToSurgery(
         Integer surgeryId,
         Integer doctorId,
         Float workingHours,
@@ -68,8 +69,8 @@ public class AdminSurgeriesController implements AdminSurgeriesApi {
 
     @Override
     public ResponseEntity<List<DoctorSurgeryCount>> countSurgeriesByDoctor(
-        OffsetDateTime startDate,
-        OffsetDateTime endDate
+        LocalDate startDate,
+        LocalDate endDate
     ) {
         return surgeriesService.countSurgeriesByDoctor(startDate, endDate);
     }

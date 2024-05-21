@@ -38,7 +38,8 @@ CREATE TABLE surgery (
     endTime datetimeoffset NULL,
     surgeryType varchar(100) NOT NULL,
     surgicalProcedureDescription text NULL,
-    emergency bit NOT NULL
+    emergency bit NOT NULL,
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE patientJournal (
@@ -624,7 +625,7 @@ BEGIN
     SET @totalCost = ISNULL(@totalMedicationCost, 0) + ISNULL(@totalProcedureCost, 0);
 END;
 
--- 3 (OK)
+-- 3 (OK) (OK)
 -- Подсчет количества операций по докторам за заданный период (курсор + циклические)
 CREATE PROCEDURE dbo.countSurgeriesByDoctor
     @startDate DATETIME,
@@ -733,7 +734,7 @@ BEGIN
     DEALLOCATE doctor_cursor;
 END;
 
--- 5 (OK)
+-- 5 (OK) (OK)
 -- Расчет общей стоимости лекарств для операции (выходные параметры)
 CREATE PROCEDURE dbo.calculateTotalMedicationCost
     @surgeryId INT,
