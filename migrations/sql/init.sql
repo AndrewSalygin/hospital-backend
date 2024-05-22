@@ -7,7 +7,7 @@ CREATE TABLE patient (
     dateOfBirth date NOT NULL,
     phoneNumber varchar(15) UNIQUE NOT NULL,
     insuranceInformation varchar(255) NOT NULL,
-	isDeleted bit NOT NULL DEFAULT 0
+    isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE doctor (
@@ -133,14 +133,14 @@ CREATE TABLE recipeJournal(
 
 CREATE TABLE recipe (
     recipeId int IDENTITY(1,1) NOT NULL,
-	medicationId int NOT NULL,
+    medicationId int NOT NULL,
     expirationDate date NOT NULL,
     isDeleted bit NOT NULL DEFAULT 0
 );
 
 CREATE TABLE treatmentMedication (
-	treatmentId int NOT NULL,
-	medicationId int NOT NULL,
+    treatmentId int NOT NULL,
+    medicationId int NOT NULL,
     doctorInstructions text,
     amount int NOT NULL
 );
@@ -333,12 +333,10 @@ VALUES
 ('Атеросклероз', 'I70.9', NULL),
 ('Рак груди', 'C50.9', NULL),
 ('Гипертония', 'I10-I15', NULL),
-('Астма', 'J45', NULL),
 ('Гепатит B', 'K75', '2-26 недель'),
 ('Хроническая бронхит', 'J41', NULL),
 ('Ревматоидный артрит', 'M05', NULL),
 ('Диабет', 'E11', NULL),
-('Панкреатит', 'K85', '5-10 дней'),
 ('Цистит', 'N30', '5-12 дней');
 
 INSERT INTO medicalHistoryNote (admissionDateTime, anamnesis)

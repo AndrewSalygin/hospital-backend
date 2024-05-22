@@ -24,7 +24,7 @@ public class JWTUtil {
 
     @SuppressWarnings("MagicNumber")
     public String generateToken(Integer id, String email, String role) {
-        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(20).toInstant());
+        Date expirationDate = Date.from(ZonedDateTime.now().plusMinutes(60).toInstant());
 
         return JWT.create()
             .withSubject(USER_DETAILS)

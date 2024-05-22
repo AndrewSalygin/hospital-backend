@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface UsersService {
 
-    ResponseEntity<Void> changeUserRights(Integer id, String role);
+    ResponseEntity<Void> changeUserRights(Integer userid, String role);
 
-    ResponseEntity<Void> deleteUser(Integer id);
+    ResponseEntity<Void> deleteUser(Integer userid);
 
     ResponseEntity<List<UserInfoForAdminPanel>> getUsers(Integer limit, Integer offset);
 }

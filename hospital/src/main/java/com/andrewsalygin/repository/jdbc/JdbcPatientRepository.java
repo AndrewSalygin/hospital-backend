@@ -110,7 +110,10 @@ public class JdbcPatientRepository implements PatientRepository {
 
     @Override
     public void deletePatient(Integer id) {
-        client.sql("DELETE FROM patient WHERE patientId = :patientId")
+        client.sql("DELETE FROM patientJournal WHERE patientId = :patientId; " +
+                "DELETE FROM patientDiseasesJournal WHERE patientId = :patientId; " +
+                "DELETE FROM surgery WHERE patientId = :patientId; " +
+                "DELETE FROM patient WHERE patientId = :patientId")
             .param("patientId", id)
             .update();
     }
