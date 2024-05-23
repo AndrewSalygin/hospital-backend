@@ -899,6 +899,39 @@ paths:
   #################### admin-doctors ####################
 
   #################### super-admin-doctors ####################
+  /super-admin-doctors:
+    post:
+      operationId: addDoctor
+      tags:
+        - super-admin-doctors
+      summary: Добавление врача
+      requestBody:
+        description: Данные нового врача
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorAddRequest'
+      responses:
+        '201':
+          description: Врач успешно добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '409':
+          description: Врач с таким номером телефона или email уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
   /super-admin-doctors/{doctorId}:
     delete:
       operationId: deleteDoctor
@@ -925,6 +958,73 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiErrorResponse'
         "404":
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    patch:
+      operationId: restoreDoctor
+      tags:
+        - super-admin-doctors
+      summary: Восстановление врача из архива
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Доктор успешно восстановлен
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Доктор с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    put:
+      operationId: updateDoctor
+      tags:
+        - super-admin-doctors
+      summary: Редактирование информации врача
+      parameters:
+        - name: doctorId
+          required: true
+          in: path
+          description: "Id доктора"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        description: Обновленные данные врача
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DoctorAddRequest'
+      responses:
+        '200':
+          description: Информация о враче успешно обновлена
+        '400':
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '404':
           description: Доктор с указанным Id не найден
           content:
             application/json:
@@ -3615,6 +3715,36 @@ paths:
 
 components:
   schemas:
+    DoctorAddRequest:
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        education:
+          type: string
+          description: Образование
+        phoneNumber:
+          type: string
+          description: Номер телефона
+        emailAddress:
+          type: string
+          description: Email врача
     TreatmentFullInfo:
       type: object
       properties:

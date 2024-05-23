@@ -1,14 +1,18 @@
 package com.andrewsalygin.service.jdbc;
 
+import com.andrewsalygin.dto.doctor.DoctorAddRequestDTO;
 import com.andrewsalygin.dto.doctor.DoctorFullInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorSpecializationDTO;
 import com.andrewsalygin.dto.surgeries.SurgeryShortInfoDTO;
+import com.andrewsalygin.hospital.model.DiseaseFullInfo;
+import com.andrewsalygin.hospital.model.DoctorAddRequest;
 import com.andrewsalygin.hospital.model.DoctorFullInfo;
 import com.andrewsalygin.hospital.model.DoctorInfo;
 import com.andrewsalygin.hospital.model.DoctorShortInfo;
 import com.andrewsalygin.hospital.model.DoctorSpecialization;
+import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.hospital.model.SurgeryShortInfo;
 import com.andrewsalygin.repository.interfaces.DoctorsRepository;
 import com.andrewsalygin.service.interfaces.DoctorsService;
@@ -110,5 +114,27 @@ public class JdbcDoctorsService implements DoctorsService {
     ) {
         doctorsRepository.changeSpecializationExperienceDoctor(doctorId, specializationId, yearsOfExperience);
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<IdResponse> addDoctor(DoctorAddRequest doctorAddRequest) {
+        DoctorAddRequestDTO doctorAddRequestDTO = modelMapper.map(doctorAddRequest, DoctorAddRequestDTO.class);
+        Integer doctorId = doctorsRepository.addDoctor(doctorAddRequestDTO);
+        IdResponse idResponse = new IdResponse();
+        idResponse.setId(doctorId);
+        return new ResponseEntity<>(idResponse, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateDoctor(Integer doctorId, DoctorAddRequest doctorAddRequest) {
+        DoctorAddRequestDTO doctorAddRequestDTO = modelMapper.map(doctorAddRequest, DoctorAddRequestDTO.class);
+        doctorsRepository.updateDoctor(doctorId, doctorAddRequestDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> restoreDoctor(Integer doctorId) {
+        doctorsRepository.restoreDoctor(doctorId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

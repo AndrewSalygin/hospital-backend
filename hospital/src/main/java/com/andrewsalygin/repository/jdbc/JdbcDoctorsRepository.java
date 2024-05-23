@@ -1,5 +1,6 @@
 package com.andrewsalygin.repository.jdbc;
 
+import com.andrewsalygin.dto.doctor.DoctorAddRequestDTO;
 import com.andrewsalygin.dto.doctor.DoctorFullInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorInfoDTO;
 import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
@@ -122,6 +123,48 @@ public class JdbcDoctorsRepository implements DoctorsRepository {
     ) {
         client.sql("UPDATE doctorSpecialization SET yearsOfExperience = ? WHERE doctorId = ? AND specializationId = ?")
             .params(yearsOfExperience, doctorId, specializationId)
+            .update();
+    }
+
+    @Override
+    public Integer addDoctor(DoctorAddRequestDTO doctorAddRequestDTO) {
+        return client.sql("INSERT INTO doctor (lastName, firstName, middleName, dateOfBirth, gender, education, " +
+            "phoneNumber, emailAddress) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            .param(doctorAddRequestDTO.getLastName())
+            .param(doctorAddRequestDTO.getFirstName())
+            .param(doctorAddRequestDTO.getMiddleName())
+            .param(doctorAddRequestDTO.getDateOfBirth())
+            .param(doctorAddRequestDTO.getGender())
+            .param(doctorAddRequestDTO.getEducation())
+            .param(doctorAddRequestDTO.getPhoneNumber())
+            .param(doctorAddRequestDTO.getEmailAddress())
+            .query(Integer.class)
+            .single();
+    }
+
+    @Override
+    public void updateDoctor(Integer doctorId, DoctorAddRequestDTO doctorAddRequestDTO) {
+        String sql = "UPDATE doctor SET lastName = ?, firstName = ?, middleName = ?, dateOfBirth = ?, gender = ?, " +
+            "education = ?, phoneNumber = ?, emailAddress = ? WHERE doctorId = ?";
+
+        client.sql(sql)
+            .param(doctorAddRequestDTO.getLastName())
+            .param(doctorAddRequestDTO.getFirstName())
+            .param(doctorAddRequestDTO.getMiddleName())
+            .param(doctorAddRequestDTO.getDateOfBirth())
+            .param(doctorAddRequestDTO.getGender())
+            .param(doctorAddRequestDTO.getEducation())
+            .param(doctorAddRequestDTO.getPhoneNumber())
+            .param(doctorAddRequestDTO.getEmailAddress())
+            .param(doctorId)
+            .update();
+    }
+
+    @Override
+    public void restoreDoctor(Integer doctorId) {
+        client.sql("UPDATE doctor SET isDeleted = 0 WHERE doctorId = ?")
+            .param(doctorId)
             .update();
     }
 }

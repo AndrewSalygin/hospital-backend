@@ -1,6 +1,9 @@
 package com.andrewsalygin.controller.doctors;
 
 import com.andrewsalygin.hospital.api.SuperAdminDoctorsApi;
+import com.andrewsalygin.hospital.model.DoctorAddRequest;
+import com.andrewsalygin.hospital.model.DoctorFullInfo;
+import com.andrewsalygin.hospital.model.IdResponse;
 import com.andrewsalygin.service.interfaces.DoctorsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,5 +38,20 @@ public class SuperAdminDoctorsController implements SuperAdminDoctorsApi {
         Integer yearsOfExperience
     ) {
         return doctorsService.changeSpecializationExperienceDoctor(doctorId, specializationId, yearsOfExperience);
+    }
+
+    @Override
+    public ResponseEntity<IdResponse> addDoctor(DoctorAddRequest doctorAddRequest) {
+        return doctorsService.addDoctor(doctorAddRequest);
+    }
+
+    @Override
+    public ResponseEntity<Void> updateDoctor(Integer doctorId, DoctorAddRequest doctorAddRequest) {
+        return doctorsService.updateDoctor(doctorId, doctorAddRequest);
+    }
+
+    @Override
+    public ResponseEntity<Void> restoreDoctor(Integer doctorId) {
+        return doctorsService.restoreDoctor(doctorId);
     }
 }

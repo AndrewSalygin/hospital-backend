@@ -1,10 +1,6 @@
 package com.andrewsalygin.service.interfaces;
 
-import com.andrewsalygin.hospital.model.DoctorFullInfo;
-import com.andrewsalygin.hospital.model.DoctorInfo;
-import com.andrewsalygin.hospital.model.DoctorShortInfo;
-import com.andrewsalygin.hospital.model.DoctorSpecialization;
-import com.andrewsalygin.hospital.model.SurgeryShortInfo;
+import com.andrewsalygin.hospital.model.*;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 
@@ -25,4 +21,10 @@ public interface DoctorsService {
     ResponseEntity<Void> addSpecializationToDoctor(Integer doctorId, Integer specializationId, Integer yearsOfExperience);
 
     ResponseEntity<Void> changeSpecializationExperienceDoctor(Integer doctorId, Integer specializationId, Integer yearsOfExperience);
+
+    ResponseEntity<IdResponse> addDoctor(DoctorAddRequest doctorAddRequest);
+
+    ResponseEntity<Void> updateDoctor(Integer doctorId, DoctorAddRequest doctorAddRequest);
+
+    ResponseEntity<Void> restoreDoctor(Integer doctorId);
 }

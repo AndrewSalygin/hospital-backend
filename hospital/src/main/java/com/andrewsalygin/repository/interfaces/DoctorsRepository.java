@@ -1,9 +1,6 @@
 package com.andrewsalygin.repository.interfaces;
 
-import com.andrewsalygin.dto.doctor.DoctorFullInfoDTO;
-import com.andrewsalygin.dto.doctor.DoctorInfoDTO;
-import com.andrewsalygin.dto.doctor.DoctorShortInfoDTO;
-import com.andrewsalygin.dto.doctor.DoctorSpecializationDTO;
+import com.andrewsalygin.dto.doctor.*;
 import com.andrewsalygin.dto.surgeries.SurgeryShortInfoDTO;
 import java.util.List;
 
@@ -24,4 +21,10 @@ public interface DoctorsRepository {
     void addSpecializationToDoctor(Integer doctorId, Integer specializationId, Integer yearsOfExperience);
 
     void changeSpecializationExperienceDoctor(Integer doctorId, Integer specializationId, Integer yearsOfExperience);
+
+    Integer addDoctor(DoctorAddRequestDTO doctorAddRequestDTO);
+
+    void updateDoctor(Integer doctorId, DoctorAddRequestDTO doctorAddRequestDTO);
+
+    void restoreDoctor(Integer doctorId);
 }
