@@ -87,7 +87,7 @@ CREATE TABLE diseaseList (
     diseaseId int NOT NULL,
     medicalHistoryNoteId int NOT NULL,
     treatmentId int NULL,
-    resultsOfTreatment varchar(255) NULL
+    resultsOfTreatment varchar(255) NOT NULL DEFAULT ' '
 );
 
 CREATE TABLE medication (

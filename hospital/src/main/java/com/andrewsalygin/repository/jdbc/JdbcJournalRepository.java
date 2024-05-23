@@ -3,6 +3,7 @@ package com.andrewsalygin.repository.jdbc;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDiseaseListInnerDTO;
+import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
 import com.andrewsalygin.repository.interfaces.JournalRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -112,11 +113,25 @@ public class JdbcJournalRepository implements JournalRepository {
         Integer medicalHistoryNoteId,
         Integer diseaseId,
         Integer treatmentId,
+
+
         String resultsOfTreatment
     ) {
         client.sql(
                 "UPDATE diseaseList SET resultsOfTreatment = ? WHERE medicalHistoryNoteId = ? AND diseaseId = ? AND treatmentId = ?")
             .params(resultsOfTreatment, medicalHistoryNoteId, diseaseId, treatmentId)
             .update();
+    }
+
+    @Override
+    public List<RecipeFullInfoDTO> getRecipes(Integer medicalHistoryNoteId) {
+        return client.sql(
+                "SELECT rV.recipeId, admissionDateTime, expirationDate, medicationName, medicationForm, dosage, " +
+                    "patientLastName, patientFirstName, patientMiddleName, doctorLastName, doctorFirstName, " +
+                    "doctorMiddleName, isDeleted " +
+                    "FROM recipeV rV INNER JOIN recipeJournal rj ON rV.recipeId = rj.recipeId WHERE medicalHistoryNoteId = ?")
+            .param(medicalHistoryNoteId)
+            .query(RecipeFullInfoDTO.class)
+            .list();
     }
 }

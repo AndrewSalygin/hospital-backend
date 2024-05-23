@@ -2,8 +2,10 @@ package com.andrewsalygin.service.jdbc;
 
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDTO;
+import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
 import com.andrewsalygin.hospital.model.PatientJournalNote;
 import com.andrewsalygin.hospital.model.PatientJournalNoteFullInfo;
+import com.andrewsalygin.hospital.model.RecipeFullInfo;
 import com.andrewsalygin.repository.interfaces.JournalRepository;
 import com.andrewsalygin.service.interfaces.JournalService;
 import java.lang.reflect.Type;
@@ -94,5 +96,13 @@ public class JdbcJournalService implements JournalService {
     ) {
         journalRepository.changeResultsOfTreatmentForDiseaseInNote(medicalHistoryNoteId, diseaseId, treatmentId, resultsOfTreatment);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<RecipeFullInfo>> getRecipesNote(Integer medicalHistoryNoteId) {
+        List<RecipeFullInfoDTO> recipeDTOs = journalRepository.getRecipes(medicalHistoryNoteId);
+        Type listType = new TypeToken<List<RecipeFullInfo>>() {}.getType();
+        List<RecipeFullInfo> recipes = modelMapper.map(recipeDTOs, listType);
+        return new ResponseEntity<>(recipes, HttpStatus.OK);
     }
 }

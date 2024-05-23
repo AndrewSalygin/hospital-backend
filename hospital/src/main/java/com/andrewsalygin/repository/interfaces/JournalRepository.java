@@ -2,6 +2,8 @@ package com.andrewsalygin.repository.interfaces;
 
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteDTO;
 import com.andrewsalygin.dto.patientJournal.PatientJournalNoteFullInfoDTO;
+import com.andrewsalygin.dto.recipe.RecipeFullInfoDTO;
+
 import java.util.List;
 
 public interface JournalRepository {
@@ -23,4 +25,6 @@ public interface JournalRepository {
     void deleteTreatmentForDiseaseInNote(Integer medicalHistoryNoteId, Integer diseaseId, Integer treatmentId);
 
     void changeResultsOfTreatmentForDiseaseInNote(Integer medicalHistoryNoteId, Integer diseaseId, Integer treatmentId, String resultsOfTreatment);
+
+    List<RecipeFullInfoDTO> getRecipes(Integer medicalHistoryNoteId);
 }

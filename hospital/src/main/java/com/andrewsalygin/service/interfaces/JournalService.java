@@ -3,6 +3,8 @@ package com.andrewsalygin.service.interfaces;
 import com.andrewsalygin.hospital.model.PatientJournalNote;
 import com.andrewsalygin.hospital.model.PatientJournalNoteFullInfo;
 import java.util.List;
+
+import com.andrewsalygin.hospital.model.RecipeFullInfo;
 import org.springframework.http.ResponseEntity;
 
 public interface JournalService {
@@ -24,4 +26,6 @@ public interface JournalService {
     ResponseEntity<Void> deleteTreatmentForDiseaseInNote(Integer medicalHistoryNoteId, Integer diseaseId, Integer treatmentId);
 
     ResponseEntity<Void> changeResultsOfTreatmentForDiseaseInNote(Integer medicalHistoryNoteId, Integer diseaseId, Integer treatmentId, String resultsOfTreatment);
+
+    ResponseEntity<List<RecipeFullInfo>> getRecipesNote(Integer medicalHistoryNoteId);
 }

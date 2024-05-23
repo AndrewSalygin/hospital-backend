@@ -3,6 +3,7 @@ package com.andrewsalygin.controller.journal;
 import com.andrewsalygin.hospital.api.JournalPatientApi;
 import com.andrewsalygin.hospital.model.PatientJournalNote;
 import com.andrewsalygin.hospital.model.PatientJournalNoteFullInfo;
+import com.andrewsalygin.hospital.model.RecipeFullInfo;
 import com.andrewsalygin.service.interfaces.JournalService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -73,5 +74,10 @@ public class JournalController implements JournalPatientApi {
             treatmentId,
             resultsOfTreatment
         );
+    }
+
+    @Override
+    public ResponseEntity<List<RecipeFullInfo>> getRecipesNote(Integer medicalHistoryNoteId) {
+        return journalService.getRecipesNote(medicalHistoryNoteId);
     }
 }
