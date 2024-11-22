@@ -30,3 +30,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# My
+/data
+/log
+/secrets

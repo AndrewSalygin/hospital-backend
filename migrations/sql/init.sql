@@ -1,3 +1,5 @@
+CREATE DATABASE hospital COLLATE Cyrillic_General_100_CI_AS;
+
 CREATE TABLE patient (
     patientId int IDENTITY(1,1) NOT NULL,
     lastName varchar(40) NOT NULL,
@@ -542,7 +544,7 @@ CREATE VIEW dbo.recipeV
 AS
 SELECT  dbo.recipe.recipeId, dbo.medicalHistoryNote.admissionDateTime, dbo.recipe.expirationDate, dbo.medication.medicationName, dbo.medication.medicationForm, dbo.medication.dosage,
      dbo.patient.lastName AS [patientLastName], dbo.patient.firstName AS [patientFirstName], dbo.patient.middleName AS [patientMiddleName], dbo.doctor.lastName AS [doctorLastName],
-     dbo.doctor.firstName AS [doctorFirstName], dbo.doctor.middleName AS [doctorMiddleName], dbo.recipe.isDeleted 
+     dbo.doctor.firstName AS [doctorFirstName], dbo.doctor.middleName AS [doctorMiddleName], dbo.recipe.isDeleted
 FROM dbo.recipe INNER JOIN
      dbo.medication ON dbo.recipe.medicationId = dbo.medication.medicationId INNER JOIN
      dbo.recipeJournal ON dbo.recipe.recipeId = dbo.recipeJournal.recipeId INNER JOIN
@@ -645,7 +647,7 @@ BEGIN
         surgeriesCount INT
     );
 
-    DECLARE surgery_cursor CURSOR FOR 
+    DECLARE surgery_cursor CURSOR FOR
         SELECT doctorId, lastName, firstName, middleName
         FROM dbo.doctor;
 
@@ -680,7 +682,7 @@ CREATE PROCEDURE dbo.getFirstAvailableDoctorBySpecializationAndExperience
 AS
 BEGIN
     DECLARE @specializationId INT;
-    
+
     SELECT @specializationId = specializationId
     FROM dbo.specialization
     WHERE specializationName = @specializationName;
@@ -700,7 +702,7 @@ BEGIN
     DECLARE @doctorId INT, @firstName VARCHAR(40), @lastName VARCHAR(40);
     DECLARE @currentDateTime DATETIME = GETDATE();  --'2024-03-09T14:15:00'; - Пульмонолог
 
-    DECLARE doctor_cursor CURSOR FOR 
+    DECLARE doctor_cursor CURSOR FOR
         SELECT d.doctorId, d.firstName, d.lastName
         FROM dbo.doctor d
         INNER JOIN dbo.doctorSpecialization ds ON d.doctorId = ds.doctorId

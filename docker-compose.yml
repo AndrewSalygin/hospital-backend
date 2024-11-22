@@ -1,0 +1,36 @@
+version: "3.9"
+services:
+
+  sql-server-db:
+    container_name: sql-server-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_SA_PASSWORD=yourStrong(!)Password"
+      - "MSSQL_PID=Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secrets:/var/opt/mssql/secrets
+
+  app:
+    container_name: hospital_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sql-server-db:1433;databaseName=${DB_NAME:-hospital};encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "${MSSQL_SA_PASSWORD:-yourStrong(!)Password}"
+      SECURITY_JWT_SALT: "${JWT_SECRET:-your_secret}"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      - sql-server-db
+
+volumes:
+  sql_server_data:
+    driver: local
