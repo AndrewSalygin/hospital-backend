@@ -1,0 +1,143 @@
+openapi: 3.0.3
+
+info:
+  title: Hospital API
+  description: "API для Hospital"
+  version: 2.4.0
+
+servers:
+  - url: https://hospital.com/
+
+tags:
+  - name: authorization
+    description: Авторизация
+  - name: super-admin-users
+    description: Супер админка (работа с пользователями)
+
+paths:
+  #################### authorization ####################
+#  /auth/registration:
+#    post:
+#      operationId: performRegistration
+#      tags:
+#        - authorization
+#      summary: Регистрация пользователя
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/RegisterUserRequest'
+#        required: true
+#      responses:
+#        "200":
+#          description: Пользователь создан успешно
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/JWTToken'
+#        "400":
+#          description: Некорректные параметры запроса
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiErrorResponse'
+#        "409":
+#          description: Пользователь с таким email уже зарегистрирован
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiErrorResponse'
+#  /auth/login:
+#    post:
+#      operationId: performLogin
+#      tags:
+#        - authorization
+#      summary: Авторизация пользователя
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/AuthorizeUserRequest'
+#        required: true
+#      responses:
+#        "200":
+#          description: Пользователь авторизован успешно
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/JWTToken'
+#        "400":
+#          description: Некорректные параметры запроса
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiErrorResponse'
+#        "404":
+#          description: Пользователь с такими данными не найден
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### authorization ####################
+
+components:
+  schemas:
+    RegisterUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    UserInfoForAdminPanel:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: Id пользователя
+          format: int32
+        email:
+          type: string
+          description: Email
+        role:
+          type: string
+          description: Роль пользователя
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id пользователя
+          format: int32
+    JWTToken:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+          description: JWT токен пользователя
+    ApiErrorResponse:
+      type: object
+      properties:
+        description:
+          type: string
+        code:
+          type: string
+        exceptionName:
+          type: string
+        exceptionMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string

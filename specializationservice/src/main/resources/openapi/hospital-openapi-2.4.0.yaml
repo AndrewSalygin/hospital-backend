@@ -1,0 +1,441 @@
+openapi: 3.0.3
+
+info:
+  title: Hospital API
+  description: "API для Hospital"
+  version: 2.4.0
+
+servers:
+  - url: https://hospital.com/
+
+tags:
+  - name: specializations
+    description: Работа со специализациями
+  - name: super-admin-specializations
+    description: Супер админка (работа со специализациями)
+
+paths:
+  #################### specializations ####################
+  /specializations:
+    get:
+      operationId: getSpecializations
+      tags:
+        - specializations
+      summary: Получить список специализаций
+      responses:
+        '200':
+          description: Специализации успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Specialization'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /specializations/doctors/{specializationId}:
+    get:
+      operationId: getSpecializationsDoctors
+      tags:
+        - specializations
+      summary: Получить список врачей по специализации
+      parameters:
+        - name: specializationId
+          required: true
+          in: path
+          description: "Id специализации"
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Врачи успешно получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DoctorShortInfo'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### specializations ####################
+
+  #################### super-admin-specializations ####################
+  /super-admin-specializations:
+    post:
+      operationId: addSpecialization
+      tags:
+        - super-admin-specializations
+      summary: Добавление специализации
+      parameters:
+        - in: query
+          name: specializationName
+          description: "Название специализации"
+          required: true
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Специализация успешно добавлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "409":
+          description: Специализация с таким именем уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+  /super-admin-specializations/{specializationId}:
+    delete:
+      operationId: deleteSpecialization
+      tags:
+        - super-admin-specializations
+      summary: Удаление специализации
+      parameters:
+        - name: specializationId
+          in: path
+          description: "Id специализации, которая удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Специализация успешно удалена
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Специализация с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### super-admin-specializations ####################
+
+  #################### authorization ####################
+  /auth/registration:
+    post:
+      operationId: performRegistration
+      tags:
+        - authorization
+      summary: Регистрация пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+        required: true
+      responses:
+        "200":
+          description: Пользователь создан успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "409":
+          description: Пользователь с таким email уже зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  /auth/login:
+    post:
+      operationId: performLogin
+      tags:
+        - authorization
+      summary: Авторизация пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizeUserRequest'
+        required: true
+      responses:
+        "200":
+          description: Пользователь авторизован успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JWTToken'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с такими данными не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+  #################### authorization ####################
+
+  #################### super-admin-users ####################
+  /super-admin-users:
+    get:
+      operationId: getUsers
+      tags:
+        - super-admin-users
+      summary: Получить список пользователей
+      description: Возвращает список пользователей со смещением offset и количеством limit
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: -1
+          description: Количество возвращаемых пользователей
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: Смещение по количеству пользователей
+      responses:
+        '200':
+          description: Получен смещенный список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserInfoForAdminPanel'
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+
+  /super-admin-users/{userId}:
+    delete:
+      operationId: deleteUser
+      tags:
+        - super-admin-users
+      summary: Удаление пользователя
+      parameters:
+        - name: userId
+          in: path
+          description: "Id пользователя, который удаляется"
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        "200":
+          description: Пользователя успешно удален
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с указанным Id не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+
+
+  /super-admin-users/userRights/{userId}:
+    post:
+      operationId: changeUserRights
+      parameters:
+        - name: userId
+          in: path
+          description: Id пользователя
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: integer
+            format: int32
+        - name: role
+          in: query
+          description: Роль пользователя
+          required: true
+          schema:
+            type: string
+      tags:
+        - super-admin-users
+      summary: Изменить права пользователя
+      responses:
+        "200":
+          description: Права пользователя успешно обновлены
+        "400":
+          description: Некорректные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        "404":
+          description: Пользователь с указанным Id не найдена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+#################### super-admin-users ####################
+
+components:
+  schemas:
+    DoctorInfo:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+    Specialization:
+      type: object
+      properties:
+        specializationId:
+          type: integer
+          description: Id специализации
+        specializationName:
+          type: string
+          description: Название специализации
+    DoctorSpecialization:
+      type: object
+      properties:
+        specializationId:
+          type: integer
+          description: Id специализации
+        specializationName:
+          type: string
+          description: Название специализации
+        yearsOfExperience:
+          type: integer
+          description: Количество лет опыта
+    DoctorShortInfo:
+      type: object
+      properties:
+        doctorId:
+          type: integer
+          description: Id врача
+        lastName:
+          type: string
+          description: Фамилия
+        firstName:
+          type: string
+          description: Имя
+        middleName:
+          type: string
+          description: Отчество
+        dateOfBirth:
+          type: string
+          description: Дата рождения
+          format: date
+        gender:
+          type: string
+          description: Пол
+          minLength: 1
+          maxLength: 1
+        specializationName:
+          type: string
+          description: Специализация
+        yearsOfExperience:
+          type: integer
+          description: Количество лет опыта
+        isDeleted:
+          type: boolean
+          description: Удалён ли врач
+    RegisterUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    UserInfoForAdminPanel:
+      type: object
+      properties:
+        userId:
+          type: integer
+          description: Id пользователя
+          format: int32
+        email:
+          type: string
+          description: Email
+        role:
+          type: string
+          description: Роль пользователя
+    AuthorizeUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email
+        password:
+          type: string
+          description: Пароль пользователя
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id пользователя
+          format: int32
+    JWTToken:
+      type: object
+      properties:
+        jwtToken:
+          type: string
+          description: JWT токен пользователя
+    ApiErrorResponse:
+      type: object
+      properties:
+        description:
+          type: string
+        code:
+          type: string
+        exceptionName:
+          type: string
+        exceptionMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string

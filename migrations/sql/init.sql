@@ -1,4 +1,4 @@
-CREATE DATABASE hospital COLLATE Cyrillic_General_100_CI_AS;
+CREATE DATABASE gateway_db COLLATE Cyrillic_General_100_CI_AS;
 
 CREATE TABLE patient (
     patientId int IDENTITY(1,1) NOT NULL,

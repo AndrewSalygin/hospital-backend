@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: Gateway
+  cloud:
+    gateway:
+      routes:
+        - id: application_service
+          uri: lb://application-service
+          predicates:
+            - Path=/patients/**
+            - Path=/admin-patients/**
+            - Path=/super-admin-patients/**
+            - Path=/doctors/**
+            - Path=/admin-doctors/**
+            - Path=/super-admin-doctors/**
+            - Path=/recipes/**
+            - Path=/super-admin-recipes/**
+            - Path=/diseases/**
+            - Path=/super-admin-diseases/**
+            - Path=/medications/**
+            - Path=/admin-medications/**
+            - Path=/journal-patient/**
+            - Path=/admin-journal-patient/**
+            - Path=/treatments/**
+            - Path=/medicalProcedures/**
+            - Path=/super-admin-medicalProcedures/**
+            - Path=/doctorsMedicalProcedures/**
+            - Path=/super-admin-doctorsMedicalProcedures/**
+            - Path=/surgeries/**
+            - Path=/admin-surgeries/**
+        - id: specialization_service
+          uri: lb://specialization-service
+          predicates:
+            - Path=/specializations/**
+            - Path=/super-admin-specializations/**
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlserver://localhost:1435;databaseName=gateway_db;encrypt=true;trustServerCertificate=true}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:yourStrong(!)Password}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER:http://localhost:8761/eureka/}
+    registryFetchIntervalSeconds: 10
+
+secrets:
+  jwt_secret: secret
+
+server:
+  port: 8080

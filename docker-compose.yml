@@ -1,8 +1,8 @@
 version: "3.9"
 services:
 
-  sql-server-db:
-    container_name: sql-server-db
+  sql-server-application-db:
+    container_name: sql-server-application-db
     image: mcr.microsoft.com/mssql/server:2022-latest
     user: root
     environment:
@@ -12,25 +12,110 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - ./data:/var/opt/mssql/data
-      - ./log:/var/opt/mssql/log
-      - ./secrets:/var/opt/mssql/secrets
+      - sqlserver_data_application_db:/var/opt/mssql/data
+      - sqlserver_log_application_db:/var/opt/mssql/log
+      - sqlserver_secrets_application_db:/var/opt/mssql/secrets
 
-  app:
-    container_name: hospital_app
+  sql-server-specialization-db:
+    container_name: sql-server-specialization-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_SA_PASSWORD=yourStrong(!)Password"
+      - "MSSQL_PID=Developer"
+    ports:
+      - "1434:1433"
+    volumes:
+      - sqlserver_data_specialization_db:/var/opt/mssql/data
+      - sqlserver_log_specialization_db:/var/opt/mssql/log
+      - sqlserver_secrets_specialization_db:/var/opt/mssql/secrets
+
+  sql-server-gateway-db:
+    container_name: sql-server-gateway-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      - "ACCEPT_EULA=Y"
+      - "MSSQL_SA_PASSWORD=yourStrong(!)Password"
+      - "MSSQL_PID=Developer"
+    ports:
+      - "1435:1433"
+    volumes:
+      - sqlserver_data_gateway_db:/var/opt/mssql/data
+      - sqlserver_log_gateway_db:/var/opt/mssql/log
+      - sqlserver_secrets_gateway_db:/var/opt/mssql/secrets
+
+  application-service:
+    container_name: application-service
     build:
-      context: .
+      context: ./applicationservice
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sql-server-db:1433;databaseName=${DB_NAME:-hospital};encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sql-server-application-db:1433;databaseName=application_db;encrypt=true;trustServerCertificate=true"
       SPRING_DATASOURCE_USERNAME: "sa"
       SPRING_DATASOURCE_PASSWORD: "${MSSQL_SA_PASSWORD:-yourStrong(!)Password}"
       SECURITY_JWT_SALT: "${JWT_SECRET:-your_secret}"
+      EUREKA_SERVER: "http://eureka-service:8761/eureka/"
+      SPECIALIZATION_SERVICE_URL: "http://specialization-service:8090"
+    ports:
+      - "${APP_PORT:-8070}:8070"
+    depends_on:
+      - sql-server-application-db
+      - eureka-service
+
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sql-server-gateway-db:1433;databaseName=gateway_db;encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "${MSSQL_SA_PASSWORD:-yourStrong(!)Password}"
+      SECURITY_JWT_SALT: "${JWT_SECRET:-your_secret}"
+      EUREKA_SERVER: "http://eureka-service:8761/eureka/"
     ports:
       - "${APP_PORT:-8080}:8080"
     depends_on:
-      - sql-server-db
+      - sql-server-gateway-db
+      - eureka-service
+
+  specialization-service:
+    container_name: specialization-service
+    build:
+      context: ./specializationservice
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://sql-server-specialization-db:1433;databaseName=specialization_db;encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "${MSSQL_SA_PASSWORD:-yourStrong(!)Password}"
+      SECURITY_JWT_SALT: "${JWT_SECRET:-your_secret}"
+      EUREKA_SERVER: "http://eureka-service:8761/eureka/"
+      APPLICATION_SERVICE_URL: "http://application-service:8070"
+    ports:
+      - "${APP_PORT:-8090}:8090"
+    depends_on:
+      - sql-server-specialization-db
+      - eureka-service
+
+  eureka-service:
+    container_name: eureka-service
+    build:
+      context: ./eurekaserver
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT:-8761}:8761"
 
 volumes:
   sql_server_data:
     driver: local
+  sqlserver_data_application_db:
+  sqlserver_log_application_db:
+  sqlserver_secrets_application_db:
+  sqlserver_data_specialization_db:
+  sqlserver_log_specialization_db:
+  sqlserver_secrets_specialization_db:
+  sqlserver_data_gateway_db:
+  sqlserver_log_gateway_db:
+  sqlserver_secrets_gateway_db:
