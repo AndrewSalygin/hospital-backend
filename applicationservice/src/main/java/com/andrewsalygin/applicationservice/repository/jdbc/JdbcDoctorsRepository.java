@@ -70,7 +70,7 @@ public class JdbcDoctorsRepository implements DoctorsRepository {
                 "OFFSET :offset ROWS";
         } else if (limit > 0) {
             query = "SELECT d.doctorId, lastName, firstName, middleName, dateOfBirth, gender, " +
-                "specializationName, yearsOfExperience, isDeleted " +
+                "yearsOfExperience, isDeleted " +
                 "FROM doctor d " +
                 "JOIN doctorSpecialization ds ON d.doctorId = ds.doctorId " +
                 "OFFSET :offset ROWS " +

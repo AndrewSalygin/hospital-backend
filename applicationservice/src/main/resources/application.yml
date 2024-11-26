@@ -14,11 +14,16 @@ spring:
       httpclient:
         hc5:
           enabled: true
-    kafka:
-      bootstrap-servers: localhost:9092
-      producer:
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  kafka:
+    bootstrap-servers: ${KAFKA_ADDRESS:http://localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: com.andrewsalygin.applicationservice.util.SpecializationOrDoctorSpecializationDeserializer
+    properties:
+      spring.json.trusted.packages: "*"
 
 eureka:
   client:
@@ -42,3 +47,4 @@ springdoc:
 application:
   specialization-service:
     url: ${SPECIALIZATION_SERVICE_URL:http://localhost:8090}
+  kafka: true

@@ -3,12 +3,21 @@ package com.andrewsalygin.applicationservice.dto.doctor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
-@NoArgsConstructor(force = true)
+@Setter
 public class DoctorSpecializationDTO {
-    private final Integer specializationId;
-    private final String specializationName;
-    private final Integer yearsOfExperience;
+    private Integer specializationId;
+    private String specializationName;
+    private Integer yearsOfExperience;
+
+    public DoctorSpecializationDTO() {
+    }
+
+    public DoctorSpecializationDTO(Integer specializationId, String specializationName, Integer yearsOfExperience) {
+        this.specializationId = specializationId;
+        this.specializationName = specializationName;
+        this.yearsOfExperience = yearsOfExperience;
+    }
 }

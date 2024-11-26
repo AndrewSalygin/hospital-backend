@@ -18,10 +18,13 @@ import com.andrewsalygin.applicationservice.model.IdResponse;
 import com.andrewsalygin.applicationservice.model.Specialization;
 import com.andrewsalygin.applicationservice.model.SurgeryShortInfo;
 import com.andrewsalygin.applicationservice.repository.interfaces.DoctorsRepository;
+import com.andrewsalygin.applicationservice.service.KafkaConsumerService;
+import com.andrewsalygin.applicationservice.service.KafkaProducerService;
 import com.andrewsalygin.applicationservice.service.interfaces.DoctorsService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,13 @@ public class JdbcDoctorsService implements DoctorsService {
     private final SpecializationClient specializationClient;
 
     private final ModelMapper modelMapper;
+
+    private final KafkaProducerService kafkaProducerService;
+
+    private final KafkaConsumerService kafkaConsumerService;
+
+    @Value("${application.kafka}")
+    private boolean isKafka;
 
     @Override
     public ResponseEntity<List<SurgeryShortInfo>> getSurgeriesForDoctor(
@@ -67,7 +77,17 @@ public class JdbcDoctorsService implements DoctorsService {
 
     @Override
     public ResponseEntity<List<DoctorShortInfo>> getDoctors(Integer limit, Integer offset) {
-        List<Specialization> specializations = specializationClient.getSpecializations().getBody();
+        List<Specialization> specializations;
+        if (isKafka) {
+            try {
+                kafkaProducerService.sendNotifySpecializations();
+                specializations = kafkaConsumerService.waitForSpecializations();
+            } catch (InterruptedException e) {
+                specializations = specializationClient.getSpecializations().getBody();
+            }
+        } else {
+            specializations = specializationClient.getSpecializations().getBody();
+        }
         List<DoctorSpecialInfoDTO> resultFromRepository = doctorsRepository.getDoctors(limit, offset);
 
         for (var doctorElement : resultFromRepository) {
@@ -97,14 +117,25 @@ public class JdbcDoctorsService implements DoctorsService {
 
     @Override
     public ResponseEntity<List<DoctorSpecialization>> getDoctorSpecializations(Integer doctorId) {
-        List<DoctorSpecializationDTO> resultFromRepository = specializationClient.getDoctorSpecializations(doctorId).getBody();
+        List<DoctorSpecializationDTO> doctorSpecializations;
+        if (isKafka) {
+            try {
+                kafkaProducerService.sendDoctorId(doctorId);
+                doctorSpecializations = kafkaConsumerService.waitForDoctorSpecializations();
+            } catch (InterruptedException e) {
+                doctorSpecializations = specializationClient.getDoctorSpecializations(doctorId).getBody();
+            }
+        } else {
+            doctorSpecializations = specializationClient.getDoctorSpecializations(doctorId).getBody();
+        }
 
         Type listType = new TypeToken<List<DoctorSpecialization>>() {
         }.getType();
-        List<DoctorSpecialization> result = modelMapper.map(resultFromRepository, listType);
+        List<DoctorSpecialization> result = modelMapper.map(doctorSpecializations, listType);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
     @Override
     public ResponseEntity<Void> deleteDoctor(Integer doctorId) {

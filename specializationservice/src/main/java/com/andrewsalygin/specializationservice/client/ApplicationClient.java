@@ -16,5 +16,5 @@ public interface ApplicationClient {
         value = "/specializations/{specializationId}/doctors/",
         produces = { "application/json" }
     )
-    ResponseEntity<List<DoctorShortInfo>> getSpecializationsDoctors(@PathVariable("specializationId") Integer specializationId);
+    ResponseEntity<List<DoctorShortInfo>> getDoctorsForSpecialization(@PathVariable("specializationId") Integer specializationId);
 }

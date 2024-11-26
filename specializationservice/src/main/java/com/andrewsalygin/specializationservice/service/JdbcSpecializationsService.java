@@ -10,6 +10,7 @@ import com.andrewsalygin.specializationservice.repository.JdbcSpecializationsRep
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,14 @@ public class JdbcSpecializationsService {
 
     private final ApplicationClient applicationClient;
 
+    private final KafkaProducerService kafkaProducerService;
+
+    private final KafkaConsumerService kafkaConsumerService;
+
     private final ModelMapper modelMapper;
+
+    @Value("${application.kafka}")
+    private boolean isKafka;
 
     public ResponseEntity<List<Specialization>> getSpecializations() {
         List<Specialization> resultFromRepository = specializationsRepository.getSpecializations();
@@ -39,11 +47,21 @@ public class JdbcSpecializationsService {
     }
 
     public ResponseEntity<List<DoctorShortInfo>> getSpecializationsDoctors(Integer specializationId) {
-        List<DoctorShortInfo> resultFromRepository = applicationClient.getSpecializationsDoctors(specializationId).getBody();
+        List<DoctorShortInfo> doctors;
+        if (isKafka) {
+            try {
+                kafkaProducerService.sendSpecialization(specializationId);
+                doctors = kafkaConsumerService.waitForDoctorInfo();
+            } catch (InterruptedException e) {
+                doctors = applicationClient.getDoctorsForSpecialization(specializationId).getBody();
+            }
+        } else {
+            doctors = applicationClient.getDoctorsForSpecialization(specializationId).getBody();
+        }
 
         Type listType = new TypeToken<List<DoctorShortInfo>>() {
         }.getType();
-        List<DoctorShortInfo> result = modelMapper.map(resultFromRepository, listType);
+        List<DoctorShortInfo> result = modelMapper.map(doctors, listType);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
